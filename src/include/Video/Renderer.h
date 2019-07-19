@@ -4,6 +4,7 @@
 
 #ifndef TWIG_ENGINE_RENDERER_H
 #define TWIG_ENGINE_RENDERER_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -16,28 +17,11 @@
 #endif
 
 namespace TE {
-    enum class GraphicsAPI {
-#ifndef TE_PLATFORM_MACOS
-        OpenGL, Vulkan,
-#endif
-
-#ifdef TE_PLATFORM_WINDOWS
-        DirectX,
-#endif
-
-#ifdef TE_PLATFORM_MACOS
-        Metal
-#endif
-    };
-
     class Renderer {
     private:
-        static GraphicsAPI activeAPI;
         static Window* window;
 
         static Window* CreateWindow(unsigned int width, unsigned int height, std::string title);
-
-        static std::vector<VertexArrayObject*> VAOs;
     public:
         static int Init(GraphicsAPI API);
         static int Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title);
@@ -48,7 +32,8 @@ namespace TE {
         static bool WindowIsOpen();
         static void Run();
 
-        static VertexArrayObject* CreateVertexArrayObject();
+        static std::shared_ptr<VertexArrayObject> CreateVertexArrayObject();
+        static std::shared_ptr<VertexBufferObject>  CreateVertexBufferObject();
     };
 }
 

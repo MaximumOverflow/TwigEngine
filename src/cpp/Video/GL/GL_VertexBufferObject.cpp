@@ -19,7 +19,21 @@ void GL_VertexBufferObject::SetLayout(VertexBufferLayout layout) {
     this->layout = layout;
 }
 
-void GL_VertexBufferObject::SetData(TE::Types::Array<float> data) {
+void GL_VertexBufferObject::SetData(uint32_t elements, float* data) {
     glBindBuffer(GL_ARRAY_BUFFER, ID);
-    glBufferData(GL_ARRAY_BUFFER, data.Size(), data.Get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, elements, data, GL_STATIC_DRAW);
+}
+
+unsigned long GL_VertexBufferObject::GetRendererID() {
+    return rendererID;
+}
+
+GL_VertexBufferObject::GL_VertexBufferObject(unsigned long rendererID) {
+    glCreateBuffers(1, &ID);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
+    this->rendererID = rendererID;
+}
+
+GL_VertexBufferObject::~GL_VertexBufferObject() {
+    glDeleteBuffers(1, &ID);
 }

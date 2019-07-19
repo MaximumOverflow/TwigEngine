@@ -4,20 +4,22 @@
 
 #include "../../include/Video/Renderer.h"
 #include "../../include/Debug.h"
+#include "../../include/Memory.h"
 
 #ifndef TE_PLATFORM_MACOS
-    #include "../../include/Video/GL/GL_Window.h"
-    #include "../../include/Video/VK/VK_Window.h"
-    #include "../../include/Video/GL/GL_VertexArrayObject.h"
+#include "../../include/Video/GL/GL_Window.h"
+#include "../../include/Video/VK/VK_Window.h"
+#include "../../include/Video/GL/GL_VertexArrayObject.h"
+#include "../../include/Video/GL/GL_VertexBufferObject.h"
+#include "../../include/Global.h"
 #endif
 
 #include <exception>
 #include <stdexcept>
 
 using namespace TE;
-GraphicsAPI Renderer::activeAPI;
+#define activeAPI Global::activeAPI
 Window* Renderer::window;
-std::vector<VertexArrayObject*> Renderer::VAOs;
 
 int Renderer::Init(GraphicsAPI API) {
     Debug::Log("Initializing renderer...");
@@ -47,6 +49,7 @@ int Renderer::Init(GraphicsAPI API) {
 int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title) {
     Init(API);
     CreateWindow(width, height, std::move(title));
+
     return 0;
 }
 
@@ -88,7 +91,11 @@ void Renderer::Run() {
         GL_Window* gl_window = static_cast<GL_Window*>(window);
         glClear(GL_COLOR_BUFFER_BIT);
         //Rendering code
-
+        for (auto& VAO : Cache::Graphics::VAOs)
+        {
+            VAO->Bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
         //
         gl_window->SwapBuffers();
     }
@@ -99,18 +106,32 @@ bool Renderer::WindowIsOpen() {
     return window->IsOpen();
 }
 
-VertexArrayObject* Renderer::CreateVertexArrayObject() {
-    VertexArrayObject* VAO;
+std::shared_ptr<VertexArrayObject> Renderer::CreateVertexArrayObject() {
+    std::shared_ptr<VertexArrayObject>VAO;
     switch (activeAPI)
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
-            VAO = new GL_VertexArrayObject(VAOs.size());
-            VAOs.push_back(VAO);
+            VAO = std::make_shared<GL_VertexArrayObject>(Cache::Graphics::VAOs.size());
+            Cache::Graphics::VAOs.push_back(VAO);
             break;
 #endif
     }
     return VAO;
+}
+
+std::shared_ptr<VertexBufferObject> Renderer::CreateVertexBufferObject() {
+    std::shared_ptr<VertexBufferObject> VBO;
+    switch (activeAPI)
+    {
+#ifndef TE_PLATFORM_MACOS
+        case GraphicsAPI::OpenGL:
+            VBO = std::make_shared<GL_VertexBufferObject>(Cache::Graphics::VBOs.size());
+            Cache::Graphics::VBOs.push_back(VBO);
+            break;
+#endif
+    }
+    return VBO;
 }
 
 GraphicsAPI Renderer::GetCurrentAPI() {

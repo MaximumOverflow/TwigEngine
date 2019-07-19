@@ -23,10 +23,14 @@ unsigned long TE::GL_VertexArrayObject::GetRendererID() {
     return rendererID;
 }
 
-void TE::GL_VertexArrayObject::LinkVertexBufferObject(std::shared_ptr<TE::VertexBufferObject> &vertexBufferObject) {
+void TE::GL_VertexArrayObject::LinkVertexBufferObject(const std::shared_ptr<TE::VertexBufferObject> &vertexBufferObject) {
     VBOs.push_back(vertexBufferObject);
 }
 
 std::vector<std::shared_ptr<TE::VertexBufferObject>> TE::GL_VertexArrayObject::GetLinkedVertexBufferObjects() {
     return VBOs;
+}
+
+TE::GL_VertexArrayObject::~GL_VertexArrayObject() {
+    glDeleteVertexArrays(1, &ID);
 }

@@ -15,12 +15,14 @@ namespace TE {
     public:
         explicit GL_VertexArrayObject(unsigned long rendererID);
 
+        ~GL_VertexArrayObject() override;
+
         unsigned long GetRendererID() override;
 
         void Bind() override;
         void Unbind() override;
 
-        void LinkVertexBufferObject(std::shared_ptr<VertexBufferObject> &vertexBufferObject) override;
+        void LinkVertexBufferObject(const std::shared_ptr<VertexBufferObject> &vertexBufferObject) override;
 
         std::vector<std::shared_ptr<VertexBufferObject>> GetLinkedVertexBufferObjects() override;
 

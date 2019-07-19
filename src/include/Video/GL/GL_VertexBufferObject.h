@@ -10,16 +10,21 @@
 namespace TE {
     class GL_VertexBufferObject : public VertexBufferObject{
     private:
-        VertexBufferLayout layout;
+        VertexBufferLayout layout = {0,0,0,0,0,0};
         uint32_t ID;
+        unsigned long rendererID;
     public:
-        void Bind() override;
+        explicit GL_VertexBufferObject(unsigned long rendererID);
 
+        ~GL_VertexBufferObject() override;
+
+        void Bind() override;
         void Unbind() override;
 
-        void SetLayout(VertexBufferLayout layout) override;
+        unsigned long GetRendererID() override;
 
-        void SetData(TE::Types::Array<float> data) override;
+        void SetLayout(VertexBufferLayout layout) override;
+        void SetData(uint32_t elements, float* data) override;
     };
 }
 

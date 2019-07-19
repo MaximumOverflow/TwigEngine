@@ -21,5 +21,4 @@ namespace TE {
         bool IsOpen() override;
     };
 }
-
 #endif //TWIG_ENGINE_GL_WINDOW_H

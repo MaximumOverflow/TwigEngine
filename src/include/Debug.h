@@ -6,6 +6,7 @@
 #define TWIG_ENGINE_DEBUG_H
 
 #include <iostream>
+#include "Global.h"
 
 namespace TE
 {
@@ -15,13 +16,15 @@ namespace TE
             Info, Warning, Error
         };
 
-//        static void ToggleDebug(bool state);
+        inline static void SetDebug(bool state) { Global::Debug = state; }
 
         static void Log(const std::string message) {
             Log(message, Severity::Info);
         }
 
         static void Log(const std::string message, Severity severity) {
+            if (!Global::Debug) return;
+
             std::string _message;
             switch (severity)
             {

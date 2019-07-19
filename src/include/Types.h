@@ -9,29 +9,19 @@
 #include <algorithm>
 
 namespace TE {
-    namespace Types {
-        template <typename T>
-        struct Array {
-        private:
-            uint32_t size;
-            T* data;
-        public:
-            Array(uint32_t size)
-            {
-                this->size = size;
-                data = new T[size];
-            }
-            Array (uint32_t size, T data[])
-            {
-                this->size = size;
-                for (uint32_t i = 0; i < size; i++)
-                    this->data[i] = data[i];
-            }
-            inline T& Get(uint32_t index) { return data[index]; }
-            inline T* Get() { return data; }
-            inline uint32_t Size() { return size; }
-        };
-    }
+    enum class GraphicsAPI {
+#ifndef TE_PLATFORM_MACOS
+        OpenGL, Vulkan,
+#endif
+
+#ifdef TE_PLATFORM_WINDOWS
+        DirectX,
+#endif
+
+#ifdef TE_PLATFORM_MACOS
+        Metal
+#endif
+    };
 }
 
 #endif //TWIG_ENGINE_TYPES_H
