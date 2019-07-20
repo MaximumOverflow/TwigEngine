@@ -29,6 +29,7 @@ namespace TE {
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         virtual unsigned long GetRendererID() = 0;
+        virtual unsigned long GetID() = 0;
 
         virtual void SetLayout(VertexBufferLayout layout) = 0;
         virtual void SetData(uint32_t elements, float* data) = 0;

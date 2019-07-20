@@ -12,6 +12,7 @@ namespace TE {
     private:
         unsigned long rendererID;
         std::vector<std::shared_ptr<VertexBufferObject>> VBOs;
+        std::shared_ptr<IndexBufferObject> IBO;
     public:
         explicit GL_VertexArrayObject(unsigned long rendererID);
 
@@ -23,8 +24,12 @@ namespace TE {
         void Unbind() override;
 
         void LinkVertexBufferObject(const std::shared_ptr<VertexBufferObject> &vertexBufferObject) override;
+        std::vector<std::shared_ptr<VertexBufferObject>>& GetLinkedVertexBufferObjects() override;
 
-        std::vector<std::shared_ptr<VertexBufferObject>> GetLinkedVertexBufferObjects() override;
+        void LinkIndexBufferObject(std::shared_ptr<IndexBufferObject> &indexBufferObject) override;
+        bool HasIndexBufferObject() override;
+
+        unsigned int GetIndexBufferObjectElementCount() override;
 
     private:
         uint32_t ID;

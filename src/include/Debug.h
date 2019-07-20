@@ -16,7 +16,7 @@ namespace TE
             Info, Warning, Error
         };
 
-        inline static void SetDebug(bool state) { Global::Debug = state; }
+        inline static void ToggleDebug(bool state) { Global::Debug = state; }
 
         static void Log(const std::string message) {
             Log(message, Severity::Info);
@@ -35,7 +35,7 @@ namespace TE
                     _message.append("[Warning]");
                     break;
                 case Severity::Error:
-                    _message.append("Error]");
+                    _message.append("[Error]");
                     break;
             }
             _message.append((severity == Severity::Warning ? "\t" : "\t\t" )+ message);

@@ -23,6 +23,8 @@ namespace TE {
 
         unsigned long GetRendererID() override;
 
+        unsigned long GetID() override;
+
         void SetLayout(VertexBufferLayout layout) override;
         void SetData(uint32_t elements, float* data) override;
     };

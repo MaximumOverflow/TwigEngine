@@ -11,6 +11,8 @@
 
 #include "Window.h"
 #include "VertexArrayObject.h"
+#include "IndexBufferObject.h"
+#include "Shader.h"
 
 #ifndef TE_PLATFORM_MACOS
     #include <GLFW/glfw3.h>
@@ -34,6 +36,9 @@ namespace TE {
 
         static std::shared_ptr<VertexArrayObject> CreateVertexArrayObject();
         static std::shared_ptr<VertexBufferObject>  CreateVertexBufferObject();
+        static std::shared_ptr<IndexBufferObject>  CreateIndexBufferObject();
+        static std::shared_ptr<Shader>  CreateShader(const std::string vertexPath, const std::string fragmentPath);
+        static std::shared_ptr<Shader>  CreateShader(const char* vertexSrc, const char* fragmentSrc);
     };
 }
 
