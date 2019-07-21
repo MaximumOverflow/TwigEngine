@@ -6,7 +6,7 @@
 #define TWIG_ENGINE_MOUSEEVENTS_H
 
 #include "Event.h"
-#include "../Types.h"
+#include "../Types/Types.h"
 #include <glm/glm.hpp>
 
 class MouseEvent : public TE::Event

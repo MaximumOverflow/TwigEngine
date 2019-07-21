@@ -7,7 +7,7 @@
 
 #include <cstdio>
 #include <array>
-#include "../Types.h"
+#include "../Types/Types.h"
 
 namespace TE {
 
@@ -18,8 +18,8 @@ namespace TE {
         bool normalized;
         int stride;
         const void* pointer;
-        VertexBufferLayout(unsigned int index, unsigned int size, unsigned int type, bool normalized, int stride, const void* pointer) :
-            index{index}, size{size}, type{type}, normalized{normalized}, stride{stride}, pointer{pointer} {};
+        VertexBufferLayout(unsigned int index, unsigned int size, Type type, bool normalized, int stride, const void* pointer) :
+            index{index}, size{size}, type{LookupType(type)}, normalized{normalized}, stride{stride}, pointer{pointer} {};
     };
 
     class VertexBufferObject {

@@ -25,21 +25,21 @@ class KeyPressedEvent : public KeyboardEvent
 
 class KeyHeldEvent : public KeyboardEvent
 {
-private:
-    int key;
-public:
-    inline KeyHeldEvent(int key) :  key{key} {}
-    TE::EventType GetType() override;
-    inline int GetKey() { return key; }
+    private:
+        int key;
+    public:
+        inline KeyHeldEvent(int key) :  key{key} {}
+        TE::EventType GetType() override;
+        inline int GetKey() { return key; }
 };
 
 class KeyReleasedEvent : public KeyboardEvent
 {
-private:
-    int key;
-public:
-    inline KeyReleasedEvent(int key) :  key{key} {}
-    TE::EventType GetType() override;
-    inline int GetKey() { return key; }
+    private:
+        int key;
+    public:
+        inline KeyReleasedEvent(int key) :  key{key} {}
+        TE::EventType GetType() override;
+        inline int GetKey() { return key; }
 };
 #endif //TWIG_ENGINE_KEYBOARDEVENTS_H

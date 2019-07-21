@@ -10,7 +10,7 @@
 namespace TE {
     class GL_VertexBufferObject : public VertexBufferObject{
     private:
-        VertexBufferLayout layout = {0,0,0,0,0,0};
+        VertexBufferLayout layout = {0,0,Type::TE_BYTE,0,0,0};
         uint32_t ID;
         unsigned long rendererID;
     public:

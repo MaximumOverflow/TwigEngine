@@ -3,12 +3,21 @@
 //
 
 #include "../../include/Events/EventHandler.h"
+#include "../../include/Global.h"
+
+#ifndef TE_PLATFORM_MACOS
+#include <GLFW/glfw3.h>
+#endif
+
 using namespace TE;
 std::vector<TE::EventListener*> EventHandler::eventListeners;
 
 void TE::EventHandler::DispatchEvent(Event *event) {
     for (auto eventListener : eventListeners)
-        eventListener->HandleEvent(event);
+        if (event->handled)
+            break;
+        else
+            eventListener->HandleEvent(event);
 
     delete event;
 }
@@ -22,4 +31,11 @@ void EventHandler::RemoveEventListener(unsigned long& ID) {
     eventListeners.erase(eventListeners.begin() + ID);
     for (unsigned long i = ID; i < eventListeners.size(); i++)
         eventListeners.at(i)->SetID(i);
+}
+
+void EventHandler::PollEvents() {
+#ifndef TE_PLATFORM_MACOS
+    if (Global::activeAPI == GraphicsAPI::OpenGL || Global::activeAPI == GraphicsAPI::Vulkan)
+        glfwPollEvents();
+#endif
 }

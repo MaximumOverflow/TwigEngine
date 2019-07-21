@@ -36,6 +36,23 @@ namespace TE {
         MouseEvent = BIT(2),
         KeyboardEvent = BIT(3)
     };
+
+    enum Type {
+        TE_BYTE,
+        TE_UNSIGNED_BYTE,
+        TE_SHORT,
+        TE_UNSIGNED_SHORT,
+        TE_INT,
+        TE_UNSIGNED_INT,
+        TE_FLOAT,
+        TE_2_BYTES,
+        TE_3_BYTES,
+        TE_4_BYTES,
+        TE_DOUBLE
+    };
+
+    unsigned int LookupType(Type type);
 }
+
 
 #endif //TWIG_ENGINE_TYPES_H

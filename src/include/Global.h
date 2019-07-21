@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_GLOBAL_H
 #define TWIG_ENGINE_GLOBAL_H
 
-#include "Types.h"
+#include "Types/Types.h"
 
 namespace TE {
     struct Global {

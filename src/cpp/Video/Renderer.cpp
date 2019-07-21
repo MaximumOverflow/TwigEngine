@@ -154,10 +154,12 @@ GraphicsAPI Renderer::GetCurrentAPI() {
 
 void Renderer::Terminate() {
     delete window;
+#ifndef TE_PLATFORM_MACOS
     if (activeAPI == GraphicsAPI::OpenGL || activeAPI == GraphicsAPI::Vulkan)
     {
         glfwTerminate();
     }
+#endif
 }
 
 std::shared_ptr<Shader> Renderer::CreateShader(const std::string vertexPath, const std::string fragmentPath) {

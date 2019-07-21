@@ -14,10 +14,6 @@
 #include "IndexBufferObject.h"
 #include "Shader.h"
 
-#ifndef TE_PLATFORM_MACOS
-    #include <GLFW/glfw3.h>
-#endif
-
 namespace TE {
     class Renderer {
     private:

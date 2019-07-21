@@ -1,10 +1,10 @@
 //
 // Created by max on 06/07/19.
 //
-
-#include "include/Application.h"
-#include "include/Debug.h"
-#include "include/TE_Macros.h"
+#include "../include/Application.h"
+#include "../include/Debug.h"
+#include "../include/TE_Macros.h"
+#include "../include/Events/EventHandler.h"
 
 using namespace TE;
 
@@ -15,12 +15,7 @@ void Application::Execute() {
 
     while (running)
     {
-#ifndef TE_PLATFORM_MACOS
-        if (Renderer::GetCurrentAPI() == GraphicsAPI::OpenGL || Renderer::GetCurrentAPI() == GraphicsAPI::Vulkan)
-        {
-            glfwPollEvents();
-        }
-#endif
+        EventHandler::PollEvents();
         Run();
         Renderer::Run();
     }

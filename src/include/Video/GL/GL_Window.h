@@ -6,6 +6,7 @@
 #define TWIG_ENGINE_GL_WINDOW_H
 
 #include "../Window.h"
+#include <GLFW/glfw3.h>
 
 namespace TE {
     class GL_Window : public Window {

@@ -18,6 +18,7 @@ namespace TE {
         static void DispatchEvent(Event* event);
         static unsigned long AddEventListener(EventListener* eventListener);
         static void RemoveEventListener(unsigned long& ID);
+        static void PollEvents();
     };
 }
 
