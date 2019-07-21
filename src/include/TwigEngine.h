@@ -5,7 +5,9 @@
 #include "Debug.h"
 #include "Video/Renderer.h"
 #include "Types/Types.h"
+
 #include "Modules/EventListener.h"
+#include "Events/Layers/LayerStack.h"
 
 #include "Input.h"
 #include "Types/KeyCodes.h"

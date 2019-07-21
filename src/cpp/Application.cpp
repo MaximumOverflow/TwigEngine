@@ -8,16 +8,23 @@
 
 using namespace TE;
 
-void Application::Execute() {
+void Application::Init() {
     running = true;
     eventListener.AddCallback(TE_BIND_CALLBACK(Application::Close));
+    LayerStack::Init();
+}
+
+void Application::Execute() {
+    Init();
     Start();
 
     while (running)
     {
         EventHandler::PollEvents();
+
         Run();
         Renderer::Run();
+        LayerStack::UpdateAll();
     }
 
     //Cleanup

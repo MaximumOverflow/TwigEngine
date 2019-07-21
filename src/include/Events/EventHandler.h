@@ -7,7 +7,7 @@
 
 #include "Event.h"
 #include "../Modules/EventListener.h"
-#include <list>
+#include "Layers/LayerStack.h"
 
 namespace TE {
     class EventHandler {

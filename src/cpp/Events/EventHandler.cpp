@@ -14,10 +14,14 @@ std::vector<TE::EventListener*> EventHandler::eventListeners;
 
 void TE::EventHandler::DispatchEvent(Event *event) {
     for (auto eventListener : eventListeners)
+    {
         if (event->handled)
             break;
         else
             eventListener->HandleEvent(event);
+    }
+
+    LayerStack::Propagate_Reverse(event);
 
     delete event;
 }

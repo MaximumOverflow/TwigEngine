@@ -14,6 +14,7 @@ namespace TE {
         bool running;
         EventListener eventListener;
         void Close(Event* event);
+        void Init();
     public:
         Application() {};
         virtual ~Application(){};
