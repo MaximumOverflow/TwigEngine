@@ -6,9 +6,14 @@
 #define TWIG_ENGINE_TE_APPLICATION_H
 
 #include "Video/Renderer.h"
+#include "Modules/EventListener.h"
 
 namespace TE {
     class Application {
+    private:
+        bool running;
+        EventListener eventListener;
+        void Close(Event* event);
     public:
         Application() {};
         virtual ~Application(){};

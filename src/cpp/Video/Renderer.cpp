@@ -213,3 +213,7 @@ std::shared_ptr<IndexBufferObject> Renderer::CreateIndexBufferObject() {
     }
     return IBO;
 }
+
+const Window *Renderer::GetWindow() {
+    return window;
+}

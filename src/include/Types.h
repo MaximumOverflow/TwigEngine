@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <algorithm>
 
+#define BIT(x) (1<<x)
+
 namespace TE {
     enum class GraphicsAPI {
 #ifndef TE_PLATFORM_MACOS
@@ -21,6 +23,18 @@ namespace TE {
 #ifdef TE_PLATFORM_MACOS
         Metal
 #endif
+    };
+
+    enum class EventType {
+        WindowClose, WindowResize, WindowMinimize, WindowMaximize,
+        MouseButtonPress, MouseButtonRelease, MouseButtonHold, MouseMove, MouseScroll,
+        KeyPress, KeyRelease, KeyHold,
+    };
+
+    enum EventCategory {
+        WindowEvent = BIT(1),
+        MouseEvent = BIT(2),
+        KeyboardEvent = BIT(3)
     };
 }
 

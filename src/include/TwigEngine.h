@@ -5,5 +5,7 @@
 #include "Debug.h"
 #include "Video/Renderer.h"
 #include "Types.h"
+#include "Input.h"
+#include "Modules/EventListener.h"
 
 #endif

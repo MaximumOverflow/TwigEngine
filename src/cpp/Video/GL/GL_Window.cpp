@@ -8,6 +8,12 @@
 #include "../../../include/Video/GL/GL_Window.h"
 #include "../../../include/Debug.h"
 
+#include "../../../include/Events/Event.h"
+#include "../../../include/Events/EventHandler.h"
+#include "../../../include/Events/MouseEvents.h"
+#include "../../../include/Events/KeyboardEvents.h"
+#include "../../../include/Events/WindowEvents.h"
+
 using namespace TE;
 
 void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
@@ -121,6 +127,18 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     glfwShowWindow(window);
     glDebugMessageCallback(GLDebugMessageCallback, nullptr);
     glEnable(GL_DEBUG_OUTPUT);
+
+    Debug::Log("Setting up GLFW callbacks...");
+    //Input callbacks
+    glfwSetCursorPosCallback(window, TranslateEvents);
+    glfwSetMouseButtonCallback(window, TranslateEvents);
+    glfwSetKeyCallback(window, TranslateEvents);
+    glfwSetScrollCallback(window, TranslateEventsScroll);
+    //Window callbacks
+    glfwSetWindowCloseCallback(window, TranslateEvents);
+    glfwSetWindowSizeCallback(window, TranslateEvents);
+    glfwSetWindowIconifyCallback(window, TranslateEvents);
+    glfwSetWindowMaximizeCallback(window, TranslateEventsMaximize);
 }
 
 
@@ -134,4 +152,60 @@ GL_Window::~GL_Window() {
 
 bool GL_Window::IsOpen() {
     return !glfwWindowShouldClose(window);
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window, double xpos, double ypos) {
+    EventHandler::DispatchEvent(new MouseMovedEvent(xpos, ypos));
+}
+
+void GL_Window::TranslateEventsScroll(GLFWwindow *window, double xScroll, double yScroll) {
+    EventHandler::DispatchEvent(new MouseScrolledEvent(xScroll, yScroll));
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window, int button, int action, int mods) {
+    switch (action)
+    {
+        case GLFW_PRESS:
+            EventHandler::DispatchEvent(new MouseButtonPressedEvent(button));
+            break;
+        case GLFW_REPEAT:
+            EventHandler::DispatchEvent(new MouseButtonHeldEvent(button));
+            break;
+        case GLFW_RELEASE:
+            EventHandler::DispatchEvent(new MouseButtonReleasedEvent(button));
+            break;
+    }
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    Event* event;
+    switch (action)
+    {
+        case GLFW_PRESS:
+            event = new KeyPressedEvent(key);
+            break;
+        case GLFW_REPEAT:
+            event = new KeyHeldEvent(key);
+            break;
+        case GLFW_RELEASE:
+            event = new KeyReleasedEvent(key);
+            break;
+    }
+    EventHandler::DispatchEvent(event);
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window) {
+    EventHandler::DispatchEvent(new WindowClosedEvent());
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window, int width, int height) {
+    EventHandler::DispatchEvent(new WindowResizedEvent(width, height));
+}
+
+void GL_Window::TranslateEvents(GLFWwindow *window, int minimized) {
+    EventHandler::DispatchEvent(new WindowMinimizedEvent((bool)minimized));
+}
+
+void GL_Window::TranslateEventsMaximize(GLFWwindow *window, int maximized) {
+    EventHandler::DispatchEvent(new WindowMaximizedEvent((bool) maximized));
 }
