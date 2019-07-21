@@ -5,6 +5,7 @@
 #include "../include/Debug.h"
 #include "../include/TE_Macros.h"
 #include "../include/Events/EventHandler.h"
+#include "../include/EntityManager.h"
 
 using namespace TE;
 
@@ -23,6 +24,7 @@ void Application::Execute() {
         EventHandler::PollEvents();
 
         Run();
+        EntityManager::UpdateAll();
         Renderer::Run();
         LayerStack::UpdateAll();
     }

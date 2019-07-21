@@ -5,7 +5,6 @@
 #ifndef TWIG_ENGINE_INDEXBUFFEROBJECT_H
 #define TWIG_ENGINE_INDEXBUFFEROBJECT_H
 
-
 #include <unitypes.h>
 
 namespace TE {

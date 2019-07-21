@@ -9,8 +9,9 @@
 
 namespace TE {
     class Module {
+    private:
     public:
-        virtual void Start() {};
+        Module() = default;
         virtual void Update() {};
     };
 }

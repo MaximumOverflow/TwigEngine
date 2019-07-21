@@ -5,8 +5,6 @@
 #ifndef TWIG_ENGINE_MEMORY_H
 #define TWIG_ENGINE_MEMORY_H
 
-#include <unordered_map>
-
 #include "Video/VertexArrayObject.h"
 
 namespace TE {
