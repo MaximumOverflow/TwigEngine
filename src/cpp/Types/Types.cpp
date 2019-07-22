@@ -4,7 +4,7 @@
 #include "Types/Types.h"
 #include "Global.h"
 
-unsigned int TE::LookupType(Type type) {
+unsigned int TE::LookupType(DataType type) {
 #ifndef TE_PLATFORM_MACOS
     if (Global::activeAPI == GraphicsAPI::OpenGL)
         return (unsigned int) 0x1400+type;

@@ -2,23 +2,21 @@
 // Created by max on 18/07/19.
 //
 
-#include "../../include/Video/Renderer.h"
-#include "../../include/Debug.h"
-#include "../../include/Memory.h"
-#include "../../include/Global.h"
+#include "Video/Renderer.h"
+#include "Debug.h"
+#include "Global.h"
 
 #ifndef TE_PLATFORM_MACOS
-#include "../../include/Video/GL/GL_Window.h"
-#include "../../include/Video/VK/VK_Window.h"
-#include "../../include/Video/GL/GL_VertexArrayObject.h"
-#include "../../include/Video/GL/GL_VertexBufferObject.h"
-#include "../../include/Video/GL/GL_IndexBufferObject.h"
-#include "../../include/Video/GL/GL_Shader.h"
+#include "Video/GL/GL_Window.h"
+#include "Video/VK/VK_Window.h"
+#include "Video/GL/GL_VertexArrayObject.h"
+#include "Video/GL/GL_VertexBufferObject.h"
+#include "Video/GL/GL_IndexBufferObject.h"
+#include "Video/GL/GL_Shader.h"
 #endif
 
 #include <exception>
 #include <stdexcept>
-#include <Video/Renderer.h>
 
 
 using namespace TE;
@@ -89,61 +87,18 @@ Window* Renderer::CreateWindow(unsigned int width, unsigned int height, std::str
     }
 }
 
-void Renderer::Run() {
+void Renderer::Draw(VertexArrayObject* VAO) {
 #ifndef TE_PLATFORM_MACOS
     if (activeAPI == GraphicsAPI::OpenGL)
     {
-        //Rendering code
-        for (auto& VAO : Cache::Graphics::VAOs)
-        {
-            VAO->Bind();
-            if (VAO->HasIndexBufferObject())
-            {
-                glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
-            }
-        }
+        VAO->Bind();
+        glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
     }
 #endif
 }
 
 bool Renderer::WindowIsOpen() {
     return window->IsOpen();
-}
-
-std::shared_ptr<VertexArrayObject> Renderer::CreateVertexArrayObject() {
-    std::shared_ptr<VertexArrayObject>VAO;
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL VAO...");
-            VAO = std::make_shared<GL_VertexArrayObject>(Cache::Graphics::VAOs.size());
-            Cache::Graphics::VAOs.push_back(VAO);
-            break;
-#endif
-        default:
-            Debug::Log("Failed to create Vertex Array Object due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return VAO;
-}
-
-std::shared_ptr<VertexBufferObject> Renderer::CreateVertexBufferObject() {
-    std::shared_ptr<VertexBufferObject> VBO;
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL VBO...");
-            VBO = std::make_shared<GL_VertexBufferObject>(Cache::Graphics::VBOs.size());
-            Cache::Graphics::VBOs.push_back(VBO);
-            break;
-#endif
-        default:
-            Debug::Log("Failed to create Vertex Buffer Object due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return VBO;
 }
 
 GraphicsAPI Renderer::GetCurrentAPI() {
@@ -160,72 +115,22 @@ void Renderer::Terminate() {
 #endif
 }
 
-std::shared_ptr<Shader> Renderer::CreateShader(const std::string vertexPath, const std::string fragmentPath) {
-    std::shared_ptr<Shader> shader;
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL shader...");
-            shader = std::make_shared<GL_Shader>(vertexPath, fragmentPath);
-            break;
-#endif
-
-        default:
-            Debug::Log("Failed to create shader due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return shader;
-}
-
-std::shared_ptr<Shader> Renderer::CreateShader(const char *vertexSrc, const char *fragmentSrc) {
-    std::shared_ptr<Shader> shader;
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL shader...");
-            shader = std::make_shared<GL_Shader>(vertexSrc, fragmentSrc);
-            break;
-#endif
-
-        default:
-            Debug::Log("Failed to create shader due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return shader;
-}
-
-std::shared_ptr<IndexBufferObject> Renderer::CreateIndexBufferObject() {
-    std::shared_ptr<IndexBufferObject> IBO;
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL IBO...");
-            IBO = std::make_shared<GL_IndexBufferObject>();
-            break;
-#endif
-
-        default:
-            Debug::Log("Failed to create Index Buffer Object due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return IBO;
-}
-
 const Window *Renderer::GetWindow() {
     return window;
 }
 
 void Renderer::Clear() {
+#ifndef TE_PLATFORM_MACOS
     if (activeAPI == GraphicsAPI::OpenGL)
         glClear(GL_COLOR_BUFFER_BIT);
+#endif
 }
 
 void Renderer::SwapBuffers() {
+#ifndef TE_PLATFORM_MACOS
     if (Global::activeAPI == GraphicsAPI::OpenGL) {
         GL_Window *gl_window = static_cast<GL_Window *>(window);
         gl_window->SwapBuffers();
     }
+#endif
 }

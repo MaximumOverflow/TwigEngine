@@ -19,17 +19,17 @@ namespace TE {
         bool normalized;
         int stride;
         const void* pointer;
-        VertexBufferLayout(unsigned int index, unsigned int size, Type type, bool normalized, int stride, const void* pointer) :
-            index{index}, size{size}, type{LookupType(type)}, normalized{normalized}, stride{stride}, pointer{pointer} {};
+        VertexBufferLayout(unsigned int index, unsigned int elements, DataType type, bool normalized, int bytes, const void* offset) :
+            index{index}, size{elements}, type{LookupType(type)}, normalized{normalized}, stride{bytes}, pointer{offset} {};
     };
 
     class VertexBufferObject {
     public:
+        static VertexBufferObject* Create();
         virtual ~VertexBufferObject() = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
-        virtual unsigned long GetRendererID() = 0;
         virtual unsigned long GetID() = 0;
 
         virtual void SetLayout(VertexBufferLayout layout) = 0;

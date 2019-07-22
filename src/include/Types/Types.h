@@ -37,7 +37,7 @@ namespace TE {
         KeyboardEvent = BIT(3)
     };
 
-    enum Type {
+    enum DataType {
         TE_BYTE,
         TE_UNSIGNED_BYTE,
         TE_SHORT,
@@ -50,8 +50,11 @@ namespace TE {
         TE_4_BYTES,
         TE_DOUBLE
     };
+    unsigned int LookupType(DataType type);
 
-    unsigned int LookupType(Type type);
+    enum class FileType {
+        OBJ
+    };
 }
 
 

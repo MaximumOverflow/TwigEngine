@@ -23,5 +23,8 @@ void EntityManager::RemoveEntity(GameObject *entity) {
 
 void EntityManager::UpdateAll() {
     for (auto& entity : entities)
+    {
         entity->Update();
+        entity->UpdateModules();
+    }
 }

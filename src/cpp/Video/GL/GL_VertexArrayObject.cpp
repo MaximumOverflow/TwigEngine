@@ -6,11 +6,11 @@
 #include "Debug.h"
 
 #include <GL/glew.h>
+#include <Video/GL/GL_VertexArrayObject.h>
 
-TE::GL_VertexArrayObject::GL_VertexArrayObject(unsigned long rendererID) {
+TE::GL_VertexArrayObject::GL_VertexArrayObject() {
     glGenVertexArrays(1, &ID);
     glBindVertexArray(ID);
-    this->rendererID = rendererID;
     Debug::Log("Generated OpenGL VAO with ID: " + std::to_string(ID));
 }
 
@@ -22,18 +22,14 @@ void TE::GL_VertexArrayObject::Unbind() {
     glBindVertexArray(0);
 }
 
-unsigned long TE::GL_VertexArrayObject::GetRendererID() {
-    return rendererID;
-}
-
-void TE::GL_VertexArrayObject::LinkVertexBufferObject(const std::shared_ptr<TE::VertexBufferObject> &vertexBufferObject) {
+void TE::GL_VertexArrayObject::LinkVertexBufferObject(VertexBufferObject* vertexBufferObject) {
     glBindVertexArray(ID);
     vertexBufferObject->Bind();
     VBOs.push_back(vertexBufferObject);
     Debug::Log("Linked VBO [" + std::to_string(vertexBufferObject->GetID()) + "] with VAO [" + std::to_string(ID) + "]");
 }
 
-std::vector<std::shared_ptr<TE::VertexBufferObject>>& TE::GL_VertexArrayObject::GetLinkedVertexBufferObjects() {
+std::vector<TE::VertexBufferObject*>& TE::GL_VertexArrayObject::GetLinkedVertexBufferObjects() {
     return VBOs;
 }
 
@@ -41,7 +37,7 @@ TE::GL_VertexArrayObject::~GL_VertexArrayObject() {
     glDeleteVertexArrays(1, &ID);
 }
 
-void TE::GL_VertexArrayObject::LinkIndexBufferObject(std::shared_ptr<IndexBufferObject> &indexBufferObject) {
+void TE::GL_VertexArrayObject::LinkIndexBufferObject(IndexBufferObject* indexBufferObject) {
     glBindVertexArray(ID);
     indexBufferObject->Bind();
     IBO = indexBufferObject;

@@ -29,14 +29,9 @@ void GL_VertexBufferObject::SetData(uint32_t elements, float* data) {
     glBufferData(GL_ARRAY_BUFFER, elements * sizeof(float), data, GL_STATIC_DRAW);
 }
 
-unsigned long GL_VertexBufferObject::GetRendererID() {
-    return rendererID;
-}
-
-GL_VertexBufferObject::GL_VertexBufferObject(unsigned long rendererID) {
+GL_VertexBufferObject::GL_VertexBufferObject() {
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ARRAY_BUFFER, ID);
-    this->rendererID = rendererID;
     Debug::Log("Generated OpenGL VBO with ID: " + std::to_string(ID));
 }
 

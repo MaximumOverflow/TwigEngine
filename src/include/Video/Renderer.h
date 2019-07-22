@@ -30,15 +30,9 @@ namespace TE {
         static bool WindowIsOpen();
         static const Window* GetWindow();
 
-        static void Run();
+        static void Draw(VertexArrayObject* VAO);
         static void Clear();
         static void SwapBuffers();
-
-        static std::shared_ptr<VertexArrayObject> CreateVertexArrayObject();
-        static std::shared_ptr<VertexBufferObject>  CreateVertexBufferObject();
-        static std::shared_ptr<IndexBufferObject>  CreateIndexBufferObject();
-        static std::shared_ptr<Shader>  CreateShader(const std::string vertexPath, const std::string fragmentPath);
-        static std::shared_ptr<Shader>  CreateShader(const char* vertexSrc, const char* fragmentSrc);
     };
 }
 

@@ -14,16 +14,16 @@
 namespace TE {
     class VertexArrayObject {
     public:
+        static VertexArrayObject* Create();
         virtual ~VertexArrayObject() = default;
-        virtual unsigned long GetRendererID() = 0;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
 
-        virtual void LinkVertexBufferObject(const std::shared_ptr<VertexBufferObject>& vertexBufferObject) = 0;
-        virtual std::vector<std::shared_ptr<VertexBufferObject>>& GetLinkedVertexBufferObjects() = 0;
+        virtual void LinkVertexBufferObject(VertexBufferObject* vertexBufferObject) = 0;
+        virtual std::vector<VertexBufferObject*>& GetLinkedVertexBufferObjects() = 0;
 
-        virtual void LinkIndexBufferObject(std::shared_ptr<IndexBufferObject>& indexBufferObject) = 0;
+        virtual void LinkIndexBufferObject(IndexBufferObject* indexBufferObject) = 0;
         virtual bool HasIndexBufferObject() = 0;
         virtual unsigned int GetIndexBufferObjectElementCount() = 0;
     };

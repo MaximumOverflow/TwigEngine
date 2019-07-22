@@ -27,11 +27,6 @@ void GL_IndexBufferObject::Unbind() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-unsigned long GL_IndexBufferObject::GetRendererID() {
-    //todo implement ibo caching
-    return 0;
-}
-
 void GL_IndexBufferObject::SetData(uint32_t elements, unsigned int* data) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * sizeof(unsigned int), data, GL_STATIC_DRAW);

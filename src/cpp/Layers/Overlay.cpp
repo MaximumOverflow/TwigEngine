@@ -7,6 +7,7 @@
 #include "Layers/Overlay.h"
 #include "Global.h"
 #include "Video/Renderer.h"
+#include "Debug.h"
 
 #ifndef TE_PLATFORM_MACOS
 #include "Video/GL/GL_Window.h"
@@ -75,11 +76,14 @@ void Overlay::InitializeImGui() {
 
 void Overlay::TerminateImGui() {
     Debug::Log("Shutting down ImGui...");
+
+#ifndef TE_PLATFORM_MACOS
     if (Global::activeAPI == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
     }
+#endif
 
     ImGui::DestroyContext();
 
@@ -88,11 +92,13 @@ void Overlay::TerminateImGui() {
 
 void Overlay::NewFrame() {
     if (!ImGuiInitialized) return;
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+#ifndef TE_PLATFORM_MACOS
+if (Global::activeAPI == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
     }
+#endif
 
     ImGui::NewFrame();
 }
@@ -100,16 +106,17 @@ void Overlay::NewFrame() {
 void Overlay::EndFrame() {
     if (!ImGuiInitialized) return;
     ImGui::Render();
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+#ifndef TE_PLATFORM_MACOS
+if (Global::activeAPI == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
     }
-
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
+#endif
 }

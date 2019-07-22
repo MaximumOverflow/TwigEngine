@@ -15,7 +15,6 @@ private:
     unsigned int ID;
     void BuildShader(const char *vertexSrc, const char *fragmentSrc);
 public:
-    GL_Shader(std::string vertexPath, std::string fragmentPath);
     GL_Shader(const char* vertexSrc, const char* fragmentSrc);
     ~GL_Shader() override;
 

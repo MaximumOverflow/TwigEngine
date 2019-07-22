@@ -17,7 +17,6 @@ public:
 
     void Bind() override;
     void Unbind() override;
-    unsigned long GetRendererID() override;
 
     void SetData(uint32_t elements, unsigned int*data) override;
 

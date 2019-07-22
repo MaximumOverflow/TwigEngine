@@ -21,11 +21,11 @@ void Application::Execute() {
 
     while (running)
     {
+        Renderer::Clear();
+
         EventHandler::PollEvents();
         Run();
 
-        Renderer::Clear();
-        Renderer::Run();
 
         LayerStack::UpdateAll();
         EntityManager::UpdateAll();

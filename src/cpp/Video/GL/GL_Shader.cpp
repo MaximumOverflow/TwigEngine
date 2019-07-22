@@ -10,34 +10,6 @@
 
 using namespace TE;
 
-GL_Shader::GL_Shader(const std::string vertexPath, const std::string fragmentPath) {
-    std::string vertexSrc, fragmentSrc, tmp;
-    std::ifstream file;
-
-    file.open(vertexPath);
-    if (!file.is_open())
-    {
-        Debug::Log("Failed to open vertex shader", Debug::Severity::Error);
-        return;
-    }
-    while (std::getline(file, tmp))
-        vertexSrc.append(tmp).append("\n");
-    file.close();
-
-    file.open(fragmentPath);
-    if (!file.is_open())
-    {
-        Debug::Log("Failed to open fragment shader", Debug::Severity::Error);
-        return;
-    }
-    while (std::getline(file, tmp))
-        fragmentSrc.append(tmp).append("\n");
-    file.close();
-
-    const char *cVertexSrc = vertexSrc.c_str(), *cFragmentSrc = fragmentSrc.c_str();
-    BuildShader(cVertexSrc, cFragmentSrc);
-}
-
 GL_Shader::GL_Shader(const char *vertexSrc, const char *fragmentSrc) {
     BuildShader(vertexSrc, fragmentSrc);
 }

@@ -10,11 +10,11 @@
 namespace TE {
     class IndexBufferObject {
     public:
+        static IndexBufferObject* Create();
         virtual ~IndexBufferObject() = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
-        virtual unsigned long GetRendererID() = 0;
 
         virtual void SetData(uint32_t elements, unsigned int* data) = 0;
         virtual unsigned int GetElementCount() = 0;
