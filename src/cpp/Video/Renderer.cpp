@@ -18,6 +18,8 @@
 
 #include <exception>
 #include <stdexcept>
+#include <Video/Renderer.h>
+
 
 using namespace TE;
 #define activeAPI Global::activeAPI
@@ -91,8 +93,6 @@ void Renderer::Run() {
 #ifndef TE_PLATFORM_MACOS
     if (activeAPI == GraphicsAPI::OpenGL)
     {
-        GL_Window* gl_window = static_cast<GL_Window*>(window);
-        glClear(GL_COLOR_BUFFER_BIT);
         //Rendering code
         for (auto& VAO : Cache::Graphics::VAOs)
         {
@@ -102,8 +102,6 @@ void Renderer::Run() {
                 glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
             }
         }
-        //
-        gl_window->SwapBuffers();
     }
 #endif
 }
@@ -218,4 +216,16 @@ std::shared_ptr<IndexBufferObject> Renderer::CreateIndexBufferObject() {
 
 const Window *Renderer::GetWindow() {
     return window;
+}
+
+void Renderer::Clear() {
+    if (activeAPI == GraphicsAPI::OpenGL)
+        glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Renderer::SwapBuffers() {
+    if (Global::activeAPI == GraphicsAPI::OpenGL) {
+        GL_Window *gl_window = static_cast<GL_Window *>(window);
+        gl_window->SwapBuffers();
+    }
 }

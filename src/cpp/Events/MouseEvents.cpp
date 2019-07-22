@@ -1,7 +1,7 @@
 //
 // Created by max on 20/07/19.
 //
-#include "../../include/Events/MouseEvents.h"
+#include "Events/MouseEvents.h"
 using namespace TE;
 
 int MouseEvent::GetCategories() {

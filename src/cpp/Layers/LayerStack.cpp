@@ -2,8 +2,9 @@
 // Created by max on 21/07/19.
 //
 
-#include "../../../include/Events/Layers/LayerStack.h"
-#include "../../../include/Debug.h"
+#include "Debug.h"
+#include "Layers/Layer.h"
+#include "Layers/LayerStack.h"
 
 using namespace TE;
 
@@ -36,6 +37,7 @@ void LayerStack::Propagate_Reverse(Event *event) {
 
 Layer* LayerStack::AddLayer(Layer *layer) {
     layers.insert(Begin() + insertLocation++, layer);
+    layer->OnAttach();
     return layer;
 }
 
@@ -44,6 +46,7 @@ void LayerStack::RemoveLayer(Layer *layer) {
     {
         if (layers.at(i) == layer)
         {
+            layer->OnDetach();
             layers.erase(Begin() + i);
             insertLocation--;
             break;
@@ -51,12 +54,13 @@ void LayerStack::RemoveLayer(Layer *layer) {
     }
 }
 
-Layer* LayerStack::AddOverlay(Layer *layer) {
-    layers.push_back(layer);
-    return layer;
+Overlay* LayerStack::AddOverlay(Overlay* overlay) {
+    layers.push_back(static_cast<Layer*>(overlay));
+    return overlay;
 }
 
-void LayerStack::RemoveOverlay(Layer *layer) {
+void LayerStack::RemoveOverlay(Overlay* overlay) {
+    auto* layer = static_cast<Layer*>(overlay);
     for (unsigned long i = insertLocation; i < layers.size(); i++)
     {
         if (layers.at(i) == layer)
@@ -77,7 +81,9 @@ void LayerStack::Clear() {
 }
 
 void LayerStack::UpdateAll() {
+    Overlay::NewFrame();
     for (auto* layer : layers) {
         layer->Update();
     }
+    Overlay::EndFrame();
 }

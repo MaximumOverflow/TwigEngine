@@ -7,7 +7,8 @@
 
 #include <stdint-gcc.h>
 #include <string>
-#include "../Shader.h"
+
+#include "Video/Shader.h"
 
 class GL_Shader : public TE::Shader{
 private:

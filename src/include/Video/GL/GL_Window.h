@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_GL_WINDOW_H
 #define TWIG_ENGINE_GL_WINDOW_H
 
-#include "../Window.h"
+#include "Video/Window.h"
 #include <GLFW/glfw3.h>
 
 namespace TE {
@@ -26,11 +26,11 @@ namespace TE {
 
     public:
         GL_Window(unsigned int width, unsigned int height, std::string title);
-
         ~GL_Window() override;
 
         void SwapBuffers();
         bool IsOpen() override;
+        GLFWwindow* GetGLFWWindowPointer();
     };
 }
 #endif //TWIG_ENGINE_GL_WINDOW_H

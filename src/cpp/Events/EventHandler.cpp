@@ -2,8 +2,8 @@
 // Created by max on 20/07/19.
 //
 
-#include "../../include/Events/EventHandler.h"
-#include "../../include/Global.h"
+#include "Events/EventHandler.h"
+#include "Global.h"
 
 #ifndef TE_PLATFORM_MACOS
 #include <GLFW/glfw3.h>

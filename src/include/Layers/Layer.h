@@ -1,8 +1,8 @@
 #ifndef TWIG_ENGINE_LAYER_H
 #define TWIG_ENGINE_LAYER_H
 
-#include "../Event.h"
-#include "../../Modules/EventListener.h"
+#include "Events/Event.h"
+#include "Modules/EventListener.h"
 
 namespace TE {
     class Layer {
@@ -18,6 +18,9 @@ namespace TE {
         virtual void Update() {};
         virtual void OnEvent(Event* event) {};
         virtual void Notify(Event* event);
+
+        virtual void OnAttach() {};
+        virtual void OnDetach() {};
 
         void AddListener(EventListener* eventListener);
         void RemoveListener(EventListener* eventListener);

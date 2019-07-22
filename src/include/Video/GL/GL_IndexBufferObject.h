@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_GL_INDEXBUFFEROBJECT_H
 #define TWIG_ENGINE_GL_INDEXBUFFEROBJECT_H
 
-#include "../IndexBufferObject.h"
+#include "Video/IndexBufferObject.h"
 
 class GL_IndexBufferObject : public TE::IndexBufferObject{
 private:

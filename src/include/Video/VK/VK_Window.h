@@ -8,13 +8,15 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
-#include "../Window.h"
+#include "Video/Window.h"
 
 namespace TE {
     class VK_Window : public Window {
     private:
         GLFWwindow* window;
         VkInstance vkInstance;
+        VkApplicationInfo vkApplicationInfo = {};
+        VkInstanceCreateInfo vkInstanceCreateInfo = {};
 
         //GLFW Input events
         static void TranslateEvents(GLFWwindow* window, int key, int scancode, int action, int mods); //GLFW Key Events
@@ -29,10 +31,11 @@ namespace TE {
 
     public:
         VK_Window(unsigned int width, unsigned int height, std::string title);
-
         ~VK_Window() override;
 
         bool IsOpen() override;
+        GLFWwindow* GetGLFWWindowPointer();
+
     };
 }
 #endif //TWIG_ENGINE_VK_WINDOW_H

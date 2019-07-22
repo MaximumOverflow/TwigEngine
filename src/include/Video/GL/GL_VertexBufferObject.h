@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_GL_VERTEXBUFFEROBJECT_H
 #define TWIG_ENGINE_GL_VERTEXBUFFEROBJECT_H
 
-#include "../VertexBufferObject.h"
+#include "Video/VertexBufferObject.h"
 
 namespace TE {
     class GL_VertexBufferObject : public VertexBufferObject{

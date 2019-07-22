@@ -6,7 +6,7 @@
 #define TWIG_ENGINE_EVENTHANDLER_H
 
 #include "Event.h"
-#include "../Modules/EventListener.h"
+#include "Modules/EventListener.h"
 #include "Layers/LayerStack.h"
 
 namespace TE {

@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <array>
 
-#include "../Types/Types.h"
+#include "Types/Types.h"
 
 namespace TE {
 

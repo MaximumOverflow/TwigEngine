@@ -3,9 +3,10 @@
 //
 
 #include <algorithm>
-#include "../../include/Objects/GameObject.h"
-#include "../../include/EntityManager.h"
-#include "../../include/Debug.h"
+
+#include "Objects/GameObject.h"
+#include "EntityManager.h"
+#include "Debug.h"
 
 TE::GameObject::GameObject() {
     EntityManager::AddEntity(this);

@@ -6,6 +6,7 @@
 #define TWIG_ENGINE_LAYERSTACK_H
 
 #include "Layer.h"
+#include "Overlay.h"
 
 namespace TE {
     class LayerStack {
@@ -26,8 +27,8 @@ namespace TE {
 
         static Layer* AddLayer(Layer* layer);
         static void RemoveLayer(Layer* layer);
-        static Layer* AddOverlay(Layer* layer);
-        static void RemoveOverlay(Layer* layer);
+        static Overlay* AddOverlay(Overlay* overlay);
+        static void RemoveOverlay(Overlay* overlay);
     };
 }
 

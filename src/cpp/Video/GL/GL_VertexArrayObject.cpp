@@ -2,8 +2,9 @@
 // Created by max on 19/07/19.
 //
 
-#include "../../../include/Video/GL/GL_VertexArrayObject.h"
-#include "../../../include/Debug.h"
+#include "Video/GL/GL_VertexArrayObject.h"
+#include "Debug.h"
+
 #include <GL/glew.h>
 
 TE::GL_VertexArrayObject::GL_VertexArrayObject(unsigned long rendererID) {

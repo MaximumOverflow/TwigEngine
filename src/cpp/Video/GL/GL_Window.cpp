@@ -4,15 +4,17 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <Video/GL/GL_Window.h>
 
-#include "../../../include/Video/GL/GL_Window.h"
-#include "../../../include/Debug.h"
 
-#include "../../../include/Events/Event.h"
-#include "../../../include/Events/EventHandler.h"
-#include "../../../include/Events/MouseEvents.h"
-#include "../../../include/Events/KeyboardEvents.h"
-#include "../../../include/Events/WindowEvents.h"
+#include "Video/GL/GL_Window.h"
+#include "Debug.h"
+
+#include "Events/Event.h"
+#include "Events/EventHandler.h"
+#include "Events/MouseEvents.h"
+#include "Events/KeyboardEvents.h"
+#include "Events/WindowEvents.h"
 
 using namespace TE;
 
@@ -104,6 +106,7 @@ void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
 
             case GL_DEBUG_SEVERITY_NOTIFICATION:
                 _severity = "NOTIFICATION";
+                return;
                 break;
 
             default:
@@ -208,4 +211,8 @@ void GL_Window::TranslateEvents(GLFWwindow *window, int minimized) {
 
 void GL_Window::TranslateEventsMaximize(GLFWwindow *window, int maximized) {
     EventHandler::DispatchEvent(new WindowMaximizedEvent((bool) maximized));
+}
+
+GLFWwindow* GL_Window::GetGLFWWindowPointer() {
+    return window;
 }

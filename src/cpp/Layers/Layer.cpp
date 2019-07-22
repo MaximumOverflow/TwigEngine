@@ -2,7 +2,9 @@
 // Created by max on 21/07/19.
 //
 
-#include "../../../include/Events/Layers/Layer.h"
+#include "Layers/Layer.h"
+#include "Events/Event.h"
+#include "Modules/EventListener.h"
 
 void TE::Layer::Notify(TE::Event *event) {
     for (EventListener* eventListener : subscribedListeners)

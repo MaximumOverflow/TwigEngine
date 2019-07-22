@@ -2,13 +2,15 @@
 // Created by max on 18/07/19.
 //
 
-#include "../../../include/Video/VK/VK_Window.h"
-#include "../../../include/Debug.h"
+#include <Video/VK/VK_Window.h>
 
-#include "../../../include/Events/EventHandler.h"
-#include "../../../include/Events/MouseEvents.h"
-#include "../../../include/Events/KeyboardEvents.h"
-#include "../../../include/Events/WindowEvents.h"
+#include "Video/VK/VK_Window.h"
+#include "Debug.h"
+
+#include "Events/EventHandler.h"
+#include "Events/MouseEvents.h"
+#include "Events/KeyboardEvents.h"
+#include "Events/WindowEvents.h"
 
 using namespace TE;
 
@@ -16,7 +18,6 @@ VK_Window::VK_Window(unsigned int width, unsigned int height, std::string title)
 
     TE::Debug::Log("Creating Vulkan instance...");
 
-    VkApplicationInfo vkApplicationInfo = {};
     vkApplicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     vkApplicationInfo.apiVersion = VK_API_VERSION_1_0;
     vkApplicationInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
@@ -25,7 +26,6 @@ VK_Window::VK_Window(unsigned int width, unsigned int height, std::string title)
     vkApplicationInfo.pApplicationName = title.c_str();
     vkApplicationInfo.applicationVersion = VK_MAKE_VERSION(1,0,0);
 
-    VkInstanceCreateInfo vkInstanceCreateInfo = {};
     vkInstanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     vkInstanceCreateInfo.pApplicationInfo = &vkApplicationInfo;
     TE::Debug::Log("Loading Vulkan extensions...");
@@ -122,4 +122,8 @@ void VK_Window::TranslateEvents(GLFWwindow *window, int minimized) {
 
 void VK_Window::TranslateEventsMaximize(GLFWwindow *window, int maximized) {
     EventHandler::DispatchEvent(new WindowMaximizedEvent((bool) maximized));
+}
+
+GLFWwindow *VK_Window::GetGLFWWindowPointer() {
+    return window;
 }

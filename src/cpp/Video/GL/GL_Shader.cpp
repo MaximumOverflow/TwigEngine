@@ -5,8 +5,8 @@
 #include <GL/glew.h>
 #include <fstream>
 
-#include "../../../include/Video/GL/GL_Shader.h"
-#include "../../../include/Debug.h"
+#include "Video/GL/GL_Shader.h"
+#include "Debug.h"
 
 using namespace TE;
 

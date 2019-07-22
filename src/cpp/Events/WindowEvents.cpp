@@ -1,7 +1,7 @@
 //
 // Created by max on 21/07/19.
 //
-#include "../../include/Events/WindowEvents.h"
+#include "Events/WindowEvents.h"
 using namespace TE;
 
 int WindowEvent::GetCategories() {

@@ -5,7 +5,8 @@
 #ifndef TWIG_ENGINE_EVENT_H
 #define TWIG_ENGINE_EVENT_H
 
-#include "../Types/Types.h"
+#include "Types/Types.h"
+
 namespace TE {
     class Event {
     public:

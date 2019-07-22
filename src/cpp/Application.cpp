@@ -22,14 +22,19 @@ void Application::Execute() {
     while (running)
     {
         EventHandler::PollEvents();
-
         Run();
-        EntityManager::UpdateAll();
+
+        Renderer::Clear();
         Renderer::Run();
+
         LayerStack::UpdateAll();
+        EntityManager::UpdateAll();
+
+        Renderer::SwapBuffers();
     }
 
     //Cleanup
+    LayerStack::Clear();
     Renderer::Terminate();
 }
 

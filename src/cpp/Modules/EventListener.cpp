@@ -2,9 +2,9 @@
 // Created by max on 20/07/19.
 //
 
-#include "../../include/Modules/EventListener.h"
-#include "../../include/Events/EventHandler.h"
-#include "../../include/Debug.h"
+#include "Modules/EventListener.h"
+#include "Events/EventHandler.h"
+#include "Debug.h"
 
 using namespace TE;
 

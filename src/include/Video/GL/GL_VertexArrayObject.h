@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_GL_VERTEXARRAYOBJECT_H
 #define TWIG_ENGINE_GL_VERTEXARRAYOBJECT_H
 
-#include "../VertexArrayObject.h"
+#include "Video/VertexArrayObject.h"
 
 namespace TE {
     class GL_VertexArrayObject : public VertexArrayObject{

@@ -2,8 +2,9 @@
 // Created by max on 19/07/19.
 //
 
-#include "../../../include/Video/GL/GL_VertexBufferObject.h"
-#include "../../../include/Debug.h"
+#include "Video/GL/GL_VertexBufferObject.h"
+#include "Debug.h"
+
 #include <GL/glew.h>
 
 using namespace TE;

@@ -2,7 +2,7 @@
 // Created by max on 21/07/19.
 //
 
-#include "../../include/Events/KeyboardEvents.h"
+#include "Events/KeyboardEvents.h"
 using namespace TE;
 
 int KeyboardEvent::GetCategories() {

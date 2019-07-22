@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "../Modules/Module.h"
-#include "../Debug.h"
+#include "Modules/Module.h"
+#include "Debug.h"
 
 namespace TE {
     class GameObject {

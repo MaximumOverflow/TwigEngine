@@ -29,7 +29,10 @@ namespace TE {
         static GraphicsAPI GetCurrentAPI();
         static bool WindowIsOpen();
         static const Window* GetWindow();
+
         static void Run();
+        static void Clear();
+        static void SwapBuffers();
 
         static std::shared_ptr<VertexArrayObject> CreateVertexArrayObject();
         static std::shared_ptr<VertexBufferObject>  CreateVertexBufferObject();

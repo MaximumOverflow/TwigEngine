@@ -5,8 +5,8 @@
 #ifndef TWIG_ENGINE_EVENTLISTENER_H
 #define TWIG_ENGINE_EVENTLISTENER_H
 
-#include "../Events/Event.h"
-#include "Module.h"
+#include "Events/Event.h"
+#include "Modules/Module.h"
 
 namespace TE {
     class EventListener : public Module {
