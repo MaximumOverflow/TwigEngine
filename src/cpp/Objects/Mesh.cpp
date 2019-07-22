@@ -32,7 +32,7 @@ Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VBO->SetLayout(VertexBufferLayout(0, 3, TE_FLOAT, false, sizeof(float)*3, nullptr));
     IBO->SetData(indeces.size(), indeces.data());
 
-    Debug::Log("Generated mesh containing " + std::to_string(verteces.size()) + " verteces");
+    Debug::Log("Generated mesh containing " + std::to_string(verteces.size()) + " verteces from file: " + meshPath);
 }
 
 void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {

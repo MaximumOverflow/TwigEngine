@@ -27,8 +27,8 @@ void Application::Execute() {
         Run();
 
 
-        LayerStack::UpdateAll();
         EntityManager::UpdateAll();
+        LayerStack::UpdateAll();
 
         Renderer::SwapBuffers();
     }
