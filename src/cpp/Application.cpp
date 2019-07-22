@@ -7,6 +7,7 @@
 #include "TE_Macros.h"
 #include "Events/EventHandler.h"
 #include "EntityManager.h"
+#include "Global.h"
 
 #include <chrono>
 
@@ -16,6 +17,7 @@ void Application::Init() {
     running = true;
     eventListener.AddCallback(TE_BIND_CALLBACK(Application::Close));
     LayerStack::Init();
+    timedUpdateCountdown = Global::timedUpdateInterval;
 }
 
 void Application::Execute() {
@@ -25,6 +27,7 @@ void Application::Execute() {
     while (running)
     {
         auto start = std::chrono::high_resolution_clock::now();
+        timedUpdateCountdown-=Time::deltaTime;
         Renderer::Clear();
 
         EventHandler::PollEvents();
@@ -32,6 +35,11 @@ void Application::Execute() {
 
 
         EntityManager::UpdateAll();
+        if (timedUpdateCountdown <= 0)
+        {
+            EntityManager::UpdateAllTimed();
+            timedUpdateCountdown = Global::timedUpdateInterval;
+        }
         LayerStack::UpdateAll();
 
         Renderer::SwapBuffers();

@@ -11,6 +11,7 @@ namespace TE {
     struct Global {
         static bool Debug;
         static GraphicsAPI activeAPI;
+        static float timedUpdateInterval;
     };
 }
 

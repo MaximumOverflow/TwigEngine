@@ -7,3 +7,4 @@
 using namespace TE;
 bool Global::Debug;
 GraphicsAPI Global::activeAPI;
+float Global::timedUpdateInterval = 1;

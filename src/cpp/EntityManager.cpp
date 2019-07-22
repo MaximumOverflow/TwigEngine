@@ -3,6 +3,8 @@
 //
 
 #include <algorithm>
+#include <EntityManager.h>
+
 #include "../include/EntityManager.h"
 #include "../include/Debug.h"
 
@@ -27,5 +29,14 @@ void EntityManager::UpdateAll() {
         if (!entity->enabled) return;
         entity->Update();
         entity->UpdateModules();
+    }
+}
+
+void EntityManager::UpdateAllTimed() {
+    for (auto& entity : entities)
+    {
+        if (!entity->enabled) return;
+
+        entity->TimedUpdate();
     }
 }

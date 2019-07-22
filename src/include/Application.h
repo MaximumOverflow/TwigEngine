@@ -17,6 +17,7 @@ namespace TE {
         void Init();
 
         float lastTime;
+        float timedUpdateCountdown;
     public:
         Application() {};
         virtual ~Application(){};

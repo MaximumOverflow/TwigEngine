@@ -18,6 +18,7 @@ namespace TE {
         static void RemoveEntity(GameObject* entity);
 
         static void UpdateAll();
+        static void UpdateAllTimed();
     };
 }
 

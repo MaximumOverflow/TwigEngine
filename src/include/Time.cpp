@@ -3,4 +3,4 @@
 //
 
 #include "Time.h"
-double TE::Time::deltaTime;
+double TE::Time::deltaTime = 0;

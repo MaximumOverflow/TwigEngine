@@ -57,6 +57,7 @@ namespace TE {
         }
 
         virtual void Update() {};
+        virtual void TimedUpdate() {};
     };
 }
 
