@@ -12,9 +12,11 @@ namespace TE {
     class Application {
     private:
         bool running;
-        EventListener eventListener;
+        EventListener eventListener = EventListener(nullptr);
         void Close(Event* event);
         void Init();
+
+        float lastTime;
     public:
         Application() {};
         virtual ~Application(){};

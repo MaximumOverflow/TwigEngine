@@ -7,10 +7,10 @@
 
 #include <vector>
 
-#include "Modules/Module.h"
 #include "Debug.h"
 
 namespace TE {
+    class Module;
     class GameObject {
     protected:
         std::vector<Module*> modules;
@@ -18,12 +18,12 @@ namespace TE {
         GameObject();
         ~GameObject();
         std::string name;
-        bool enabled;
+        bool enabled = true;
 
         void UpdateModules();
         template <typename T>
         T* AddModule() {
-            T* module = new T();
+            T* module = new T(this);
             Module* mod = dynamic_cast<Module*>(module);
             if (mod)
                 modules.push_back(mod);

@@ -12,26 +12,28 @@
 #include "Video/IndexBufferObject.h"
 #include "Types/Types.h"
 
-class Mesh {
-private:
-    TE::VertexArrayObject* VAO;
-    TE::VertexBufferObject* VBO;
-    TE::IndexBufferObject* IBO;
+namespace TE {
+    class Mesh {
+    private:
+        VertexArrayObject* VAO;
+        VertexBufferObject* VBO;
+        IndexBufferObject* IBO;
 
-    void LoadOBJ(std::string meshPath);
+        void LoadOBJ(std::string meshPath);
 
-    std::vector<float> verteces;
-    std::vector<float> texCoords;
-    std::vector<float> normals;
-    std::vector<unsigned int> indeces;
+        std::vector<float> verteces;
+        std::vector<float> texCoords;
+        std::vector<float> normals;
+        std::vector<unsigned int> indeces;
 
-public:
-    Mesh(std::string meshPath, TE::FileType fileType);
-    void LoadModel(std::string meshPath, TE::FileType fileType);
-    TE::VertexArrayObject* GetVAO();
-    ~Mesh();
+    public:
+        Mesh(std::string meshPath, TE::FileType fileType);
+        void LoadModel(std::string meshPath, TE::FileType fileType);
+        TE::VertexArrayObject* GetVAO();
+        ~Mesh();
 
-};
+    };
+}
 
 
 #endif //TWIG_ENGINE_MESH_H

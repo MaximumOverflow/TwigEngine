@@ -4,11 +4,10 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <Video/GL/GL_Window.h>
-
 
 #include "Video/GL/GL_Window.h"
 #include "Debug.h"
+#include "Global.h"
 
 #include "Events/Event.h"
 #include "Events/EventHandler.h"

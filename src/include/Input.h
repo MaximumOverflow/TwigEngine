@@ -14,9 +14,11 @@ namespace TE {
         static bool GetMouseButtonHeld(Event *event, int button);
 
         static bool GetKeyPressed(Event *event, int key);
+        static bool GetKeyPressed(int key);
         static bool GetKeyReleased(Event *event, int key);
+        static bool GetKeyReleased(int key);
         static bool GetKeyHeld(Event *event, int key);
-        static bool GetKeyHeld(Event *event, int key, bool ignoreOSRepeatCooldown);
+        static bool GetKeyHeld(int key);
     };
 }
 

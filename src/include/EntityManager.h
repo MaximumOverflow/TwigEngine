@@ -5,7 +5,7 @@
 #ifndef TWIG_ENGINE_ENTITYMANAGER_H
 #define TWIG_ENGINE_ENTITYMANAGER_H
 
-#include "Objects/GameObject.h"
+#include "Objects/GameObjects/GameObject.h"
 
 #include <vector>
 

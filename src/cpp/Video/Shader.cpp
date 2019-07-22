@@ -24,7 +24,7 @@ TE::Shader* TE::Shader::Create(std::string vertexSource, std::string fragmentSou
 #endif
 
         default:
-            Debug::Log("Failed to create shader due to undefined API implementation.", Debug::Severity::Error);
+            Debug::Log("Failed to create shader due to unimplemented API functions", Debug::Severity::Error);
             break;
     }
     return shader;

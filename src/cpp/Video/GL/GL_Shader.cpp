@@ -7,6 +7,7 @@
 
 #include "Video/GL/GL_Shader.h"
 #include "Debug.h"
+#include "Video/Renderer.h"
 
 using namespace TE;
 
@@ -65,6 +66,5 @@ void GL_Shader::Bind() {
 }
 
 void GL_Shader::Unbind() {
-    //Todo Implement default shader
-    glUseProgram(0);
+    Renderer::BindDefaultShader();
 }

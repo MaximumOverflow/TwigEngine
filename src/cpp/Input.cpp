@@ -2,10 +2,18 @@
 // Created by max on 21/07/19.
 //
 
-#include "../include/Input.h"
-#include "../include/Events/MouseEvents.h"
-#include "../include/Events/KeyboardEvents.h"
-#include "../include/Global.h"
+#include <Input.h>
+
+#include "Input.h"
+
+#include "Events/MouseEvents.h"
+#include "Events/KeyboardEvents.h"
+#include "Video/Renderer.h"
+#include "Global.h"
+
+#ifndef TE_PLATFORM_MACOS
+#include "Video/GL/GL_Window.h"
+#endif
 
 using namespace TE;
 
@@ -57,19 +65,25 @@ bool Input::GetKeyHeld(Event *event, int key) {
     return (e->GetKey() == key);
 }
 
-bool Input::GetKeyHeld(Event *event, int key, bool ignoreOSRepeatCooldown) {
-    if (!ignoreOSRepeatCooldown)
+bool Input::GetKeyPressed(int key) {
+    if (Global::activeAPI == GraphicsAPI::OpenGL)
+        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_PRESS);
+
+    return false;
+}
+
+bool Input::GetKeyReleased(int key) {
+    if (Global::activeAPI == GraphicsAPI::OpenGL)
+        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_RELEASE);
+
+    return false;
+}
+
+bool Input::GetKeyHeld(int key) {
+    if (Global::activeAPI == GraphicsAPI::OpenGL)
     {
-        if (event->GetType() != EventType::KeyHold)
-            return false;
-    }
-    else
-    {
-        if (event->GetType() == EventType::KeyRelease)
-            return false;
+        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) != GLFW_RELEASE);
     }
 
-    KeyPressedEvent* e = static_cast<KeyPressedEvent*>(event);
-
-    return (e->GetKey() == key);
+    return false;
 }

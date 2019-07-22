@@ -8,7 +8,7 @@
 
 using namespace TE;
 
-TE::EventListener::EventListener() {
+TE::EventListener::EventListener(GameObject* parent) : Module(parent) {
     ID = EventHandler::AddEventListener(this);
     Debug::Log("Generated Event Listener of ID: " + std::to_string(ID));
 }

@@ -17,11 +17,32 @@
 
 #include <exception>
 #include <stdexcept>
+#include <Video/Renderer.h>
 
 
 using namespace TE;
 #define activeAPI Global::activeAPI
 Window* Renderer::window;
+Shader* Renderer::defaultShader;
+std::vector<Camera*> Renderer::cameras;
+
+std::string defaultVertex {"#version 330 core\n"
+                           "\n"
+                           "layout (location = 0) in vec3 vertex_pos;\n"
+                           "\n"
+                           "void main()\n"
+                           "{\n"
+                           "    gl_Position = vec4(vertex_pos, 1.0);\n"
+                           "}"};
+
+std::string defaultFragment {"#version 330 core\n"
+                             "\n"
+                             "out vec4 color;\n"
+                             "\n"
+                             "void main()\n"
+                             "{\n"
+                             "   color = vec4(1, 1, 1, 1.0);\n"
+                             "}"};
 
 int Renderer::Init(GraphicsAPI API) {
     Debug::Log("Initializing renderer...");
@@ -51,6 +72,8 @@ int Renderer::Init(GraphicsAPI API) {
 int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title) {
     Init(API);
     CreateWindow(width, height, std::move(title));
+    defaultShader = Shader::Create(defaultVertex, defaultFragment);
+    defaultShader->Bind();
     return 0;
 }
 
@@ -88,13 +111,19 @@ Window* Renderer::CreateWindow(unsigned int width, unsigned int height, std::str
 }
 
 void Renderer::Draw(VertexArrayObject* VAO) {
-#ifndef TE_PLATFORM_MACOS
-    if (activeAPI == GraphicsAPI::OpenGL)
+    for (auto& camera : cameras)
     {
-        VAO->Bind();
-        glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
-    }
+        if (!camera->enabled) return;
+
+        camera->Bind();
+#ifndef TE_PLATFORM_MACOS
+        if (activeAPI == GraphicsAPI::OpenGL)
+        {
+            VAO->Bind();
+            glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
+        }
 #endif
+    }
 }
 
 bool Renderer::WindowIsOpen() {
@@ -133,4 +162,15 @@ void Renderer::SwapBuffers() {
         gl_window->SwapBuffers();
     }
 #endif
+}
+
+void Renderer::AddCamera(Camera *camera) {
+    cameras.push_back(camera);
+    Debug::Log("Added camera \"" + camera->name + "\"");
+}
+
+void Renderer::RemoveCamera(Camera *camera) {
+    auto index = std::find(cameras.begin(), cameras.end(), camera);
+    cameras.erase(index);
+    Debug::Log("Removed camera \"" + camera->name + "\"");
 }

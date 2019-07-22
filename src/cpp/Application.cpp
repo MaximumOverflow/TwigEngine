@@ -1,11 +1,14 @@
 //
 // Created by max on 06/07/19.
 //
-#include "../include/Application.h"
-#include "../include/Debug.h"
-#include "../include/TE_Macros.h"
-#include "../include/Events/EventHandler.h"
-#include "../include/EntityManager.h"
+#include "Application.h"
+#include "Debug.h"
+#include "Time.h"
+#include "TE_Macros.h"
+#include "Events/EventHandler.h"
+#include "EntityManager.h"
+
+#include <chrono>
 
 using namespace TE;
 
@@ -21,6 +24,7 @@ void Application::Execute() {
 
     while (running)
     {
+        auto start = std::chrono::high_resolution_clock::now();
         Renderer::Clear();
 
         EventHandler::PollEvents();
@@ -31,6 +35,10 @@ void Application::Execute() {
         LayerStack::UpdateAll();
 
         Renderer::SwapBuffers();
+        auto end = std::chrono::high_resolution_clock::now();
+
+        auto time = end - start;
+        Time::deltaTime = (double) std::chrono::duration_cast<std::chrono::milliseconds>(time).count() / 1000;
     }
 
     //Cleanup

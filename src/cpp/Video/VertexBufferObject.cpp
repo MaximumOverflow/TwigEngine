@@ -21,7 +21,7 @@ TE::VertexBufferObject* TE::VertexBufferObject::Create() {
             break;
 #endif
         default:
-            Debug::Log("Failed to create Vertex Buffer Object due to undefined API implementation.", Debug::Severity::Error);
+            Debug::Log("Failed to create Vertex Buffer Object due to unimplemented API functions", Debug::Severity::Error);
             break;
     }
     return VBO;

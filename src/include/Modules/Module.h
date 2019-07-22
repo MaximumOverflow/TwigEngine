@@ -7,11 +7,15 @@
 
 #include <string>
 
+#include "Objects/GameObjects/GameObject.h"
+
 namespace TE {
     class Module {
     private:
+        GameObject* parent;
     public:
-        Module() = default;
+        Module(GameObject* parent) : parent{parent} {};
+        GameObject* GetParent();
         virtual void Update() {};
     };
 }

@@ -10,5 +10,16 @@ void MeshRenderer::SetMesh(Mesh *mesh) {
 }
 
 void MeshRenderer::Update() {
-    Renderer::Draw(mesh->GetVAO());
+    if (mesh != nullptr)
+    {
+        if (shader != nullptr)
+            shader->Bind();
+        Renderer::Draw(mesh->GetVAO());
+        if (shader != nullptr)
+            shader->Unbind();
+    }
+}
+
+void MeshRenderer::SetShader(Shader *shader) {
+    MeshRenderer::shader = shader;
 }

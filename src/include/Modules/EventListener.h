@@ -14,7 +14,7 @@ namespace TE {
         unsigned long ID;
         std::vector<std::function<void(Event*)>> functionCallbacks;
     public:
-        EventListener();
+        EventListener(GameObject* parent);
         ~EventListener();
 
         void HandleEvent(Event* event);

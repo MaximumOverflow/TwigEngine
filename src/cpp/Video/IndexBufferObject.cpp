@@ -23,7 +23,7 @@ TE::IndexBufferObject *TE::IndexBufferObject::Create() {
 #endif
 
         default:
-            Debug::Log("Failed to create Index Buffer Object due to undefined API implementation.", Debug::Severity::Error);
+            Debug::Log("Failed to create Index Buffer Object due to unimplemented API functions", Debug::Severity::Error);
             break;
     }
     return IBO;

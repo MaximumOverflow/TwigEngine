@@ -13,12 +13,15 @@
 #include "VertexArrayObject.h"
 #include "IndexBufferObject.h"
 #include "Shader.h"
+#include "Objects/GameObjects/Camera.h"
 
 namespace TE {
     class Renderer {
     private:
         static Window* window;
         static Window* CreateWindow(unsigned int width, unsigned int height, std::string title);
+        static Shader* defaultShader;
+        static std::vector<Camera*> cameras;
 
     public:
         static int Init(GraphicsAPI API);
@@ -29,6 +32,10 @@ namespace TE {
         static GraphicsAPI GetCurrentAPI();
         static bool WindowIsOpen();
         static const Window* GetWindow();
+        static void BindDefaultShader() { defaultShader->Bind(); };
+
+        static void AddCamera(Camera* camera);
+        static void RemoveCamera(Camera* camera);
 
         static void Draw(VertexArrayObject* VAO);
         static void Clear();

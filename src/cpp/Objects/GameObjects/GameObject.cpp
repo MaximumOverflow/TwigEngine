@@ -4,7 +4,8 @@
 
 #include <algorithm>
 
-#include "Objects/GameObject.h"
+#include "Objects/GameObjects/GameObject.h"
+#include "Modules/Module.h"
 #include "EntityManager.h"
 #include "Debug.h"
 
