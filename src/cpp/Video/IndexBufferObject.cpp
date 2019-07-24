@@ -13,7 +13,7 @@
 
 TE::IndexBufferObject *TE::IndexBufferObject::Create() {
     IndexBufferObject* IBO;
-    switch (Global::activeAPI)
+    switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:

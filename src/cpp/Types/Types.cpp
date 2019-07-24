@@ -6,7 +6,7 @@
 
 unsigned int TE::LookupType(DataType type) {
 #ifndef TE_PLATFORM_MACOS
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
         return (unsigned int) 0x1400+type;
 #endif
 

@@ -12,7 +12,7 @@
 
 TE::VertexArrayObject *TE::VertexArrayObject::Create() {
     VertexArrayObject* VAO;
-    switch (Global::activeAPI)
+    switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:

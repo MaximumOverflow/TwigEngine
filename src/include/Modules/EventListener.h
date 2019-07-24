@@ -5,6 +5,7 @@
 #ifndef TWIG_ENGINE_EVENTLISTENER_H
 #define TWIG_ENGINE_EVENTLISTENER_H
 
+#include <functional>
 #include "Events/Event.h"
 #include "Modules/Module.h"
 

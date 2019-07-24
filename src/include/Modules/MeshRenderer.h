@@ -16,8 +16,13 @@ namespace TE {
         Shader* shader = nullptr;
     public:
         MeshRenderer(GameObject* parent) : Module(parent) {};
+
         void SetMesh(Mesh* mesh);
+
         void SetShader(Shader *shader);
+        Shader* GetShader() const;
+
+        VertexArrayObject* GetMeshVAO();
 
         void Update() override;
     };

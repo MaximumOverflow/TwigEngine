@@ -5,19 +5,22 @@
 #include "Video/Renderer.h"
 #include "Debug.h"
 #include "Global.h"
+#include "Modules/MeshRenderer.h"
 
 #ifndef TE_PLATFORM_MACOS
-#include "Video/GL/GL_Window.h"
-#include "Video/VK/VK_Window.h"
-#include "Video/GL/GL_VertexArrayObject.h"
-#include "Video/GL/GL_VertexBufferObject.h"
-#include "Video/GL/GL_IndexBufferObject.h"
-#include "Video/GL/GL_Shader.h"
+    #include "Video/GL/GL_Window.h"
+    #include "Video/VK/VK_Window.h"
+    #include "Video/GL/GL_VertexArrayObject.h"
+    #include "Video/GL/GL_VertexBufferObject.h"
+    #include "Video/GL/GL_IndexBufferObject.h"
+    #include "Video/GL/GL_Shader.h"
 #endif
 
 #include <exception>
 #include <stdexcept>
-#include <Video/Renderer.h>
+#include <algorithm>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 using namespace TE;
@@ -30,9 +33,11 @@ std::string defaultVertex {"#version 330 core\n"
                            "\n"
                            "layout (location = 0) in vec3 vertex_pos;\n"
                            "\n"
+                           "uniform mat4 te_projection, te_view, te_model;"
                            "void main()\n"
                            "{\n"
-                           "    gl_Position = vec4(vertex_pos, 1.0);\n"
+                           "    vec4 pos = (te_projection * te_view * te_model) * vec4(vertex_pos, 1.0);"
+                           "    gl_Position = pos;\n"
                            "}"};
 
 std::string defaultFragment {"#version 330 core\n"
@@ -87,7 +92,7 @@ Window* Renderer::CreateWindow(unsigned int width, unsigned int height, std::str
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
             Debug::Log("Creating new OpenGL window...");
-            window = new GL_Window(width, height, std::move(title));
+            window = new GL_Window(width, height, title);
             glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
             return window;
 
@@ -114,8 +119,8 @@ void Renderer::Draw(VertexArrayObject* VAO) {
     for (auto& camera : cameras)
     {
         if (!camera->enabled) return;
+            camera->Bind();
 
-        camera->Bind();
 #ifndef TE_PLATFORM_MACOS
         if (activeAPI == GraphicsAPI::OpenGL)
         {
@@ -125,6 +130,49 @@ void Renderer::Draw(VertexArrayObject* VAO) {
 #endif
     }
 }
+
+void Renderer::Draw(GameObject *gameObject) {
+    for (auto& camera : cameras)
+    {
+        if (!camera->enabled) return;
+            camera->Bind();
+
+        MeshRenderer* meshRenderer = gameObject->GetModule<MeshRenderer>();
+        VertexArrayObject* vao = meshRenderer->GetMeshVAO();
+        Shader* shader = meshRenderer->GetShader();
+
+        Transform* view = camera->GetModule<Transform>();
+        Transform* transform = gameObject->GetModule<Transform>();
+
+        vao->Bind();
+
+#ifndef TE_PLATFORM_MACOS
+        if (activeAPI == GraphicsAPI::OpenGL)
+        {
+            if (shader != nullptr)
+            {
+                shader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
+                shader->SetUniformMat4f("te_view", view->GetTransformMatrix());
+                if (transform != nullptr)
+                    shader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
+                else
+                    shader->SetUniformMat4f("te_model", Mat4());
+            }
+            else
+            {
+                defaultShader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
+                defaultShader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
+                if (transform != nullptr)
+                    defaultShader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
+                else
+                    defaultShader->SetUniformMat4f("te_model", Mat4());
+            }
+            glDrawElements(GL_TRIANGLES, vao->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
+        }
+#endif
+    }
+}
+
 
 bool Renderer::WindowIsOpen() {
     return window->IsOpen();

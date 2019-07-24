@@ -8,10 +8,17 @@
 #include "Types/Types.h"
 
 namespace TE {
-    struct Global {
-        static bool Debug;
+    class Global {
+        friend class Application;
+        friend class Renderer;
+        friend class Debug;
+    private:
+        static bool debug;
         static GraphicsAPI activeAPI;
         static float timedUpdateInterval;
+    public:
+        static bool GetDebugState();
+        static const GraphicsAPI& GetActiveAPI();
     };
 }
 

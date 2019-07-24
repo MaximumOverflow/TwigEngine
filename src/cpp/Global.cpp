@@ -5,6 +5,14 @@
 #include "../include/Global.h"
 
 using namespace TE;
-bool Global::Debug;
+bool Global::debug;
 GraphicsAPI Global::activeAPI;
 float Global::timedUpdateInterval = 1;
+
+bool Global::GetDebugState() {
+    return debug;
+}
+
+const TE::GraphicsAPI &Global::GetActiveAPI() {
+    return activeAPI;
+}

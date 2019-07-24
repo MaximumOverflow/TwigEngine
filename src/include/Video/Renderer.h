@@ -38,6 +38,7 @@ namespace TE {
         static void RemoveCamera(Camera* camera);
 
         static void Draw(VertexArrayObject* VAO);
+        static void Draw(GameObject* gameObject);
         static void Clear();
         static void SwapBuffers();
     };

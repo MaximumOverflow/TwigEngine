@@ -2,6 +2,8 @@
 // Created by max on 22/07/19.
 //
 #include <fstream>
+#include <Video/Shader.h>
+
 
 #include "Video/Shader.h"
 #include "Global.h"
@@ -14,7 +16,7 @@
 TE::Shader* TE::Shader::Create(std::string vertexSource, std::string fragmentSource)
 {
     Shader* shader;
-    switch (Global::activeAPI)
+    switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
@@ -58,7 +60,7 @@ TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragm
 
     const char *cVertexSrc = vertexSrc.c_str(), *cFragmentSrc = fragmentSrc.c_str();
 
-    switch (Global::activeAPI)
+    switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
@@ -72,4 +74,15 @@ TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragm
             break;
     }
     return shader;
+}
+
+int TE::Shader::GetUniformFromCache(std::string name) {
+    auto uniform = uniformCache.find(name);
+    if (uniform == uniformCache.end())
+        return -1;
+    return uniformCache[name];
+}
+
+void TE::Shader::AddUniformToCache(std::string name, int id) {
+    uniformCache[name] = id;
 }

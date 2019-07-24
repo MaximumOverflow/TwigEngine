@@ -55,13 +55,13 @@ void Overlay::InitializeImGui() {
     }
 
 #ifndef TE_PLATFORM_MACOS
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         GLFWwindow* window = ((GL_Window*) Renderer::GetWindow())->GetGLFWWindowPointer();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 410");
     }
-    else /*if (Global::activeAPI == GraphicsAPI::Vulkan)*/
+    else /*if (Global::GetActiveAPI() == GraphicsAPI::Vulkan)*/
     {
         Debug::Log("Failed to initialize Overlay due to lack of implementation for the current API", Debug::Severity::Error);
 //        GLFWwindow* window = ((VK_Window*) Renderer::GetWindow())->GetGLFWWindowPointer();
@@ -78,7 +78,7 @@ void Overlay::TerminateImGui() {
     Debug::Log("Shutting down ImGui...");
 
 #ifndef TE_PLATFORM_MACOS
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -93,7 +93,7 @@ void Overlay::TerminateImGui() {
 void Overlay::NewFrame() {
     if (!ImGuiInitialized) return;
 #ifndef TE_PLATFORM_MACOS
-if (Global::activeAPI == GraphicsAPI::OpenGL)
+if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -107,7 +107,7 @@ void Overlay::EndFrame() {
     if (!ImGuiInitialized) return;
     ImGui::Render();
 #ifndef TE_PLATFORM_MACOS
-if (Global::activeAPI == GraphicsAPI::OpenGL)
+if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

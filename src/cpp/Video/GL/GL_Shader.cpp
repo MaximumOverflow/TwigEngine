@@ -68,3 +68,13 @@ void GL_Shader::Bind() {
 void GL_Shader::Unbind() {
     Renderer::BindDefaultShader();
 }
+
+void GL_Shader::SetUniformMat4f(std::string name, const Mat4& matrix) {
+    int uniform = GetUniformFromCache(name);
+    if (uniform < 0)
+    {
+        uniform = glGetUniformLocation(ID, name.c_str());
+        AddUniformToCache(name, uniform);
+    }
+    glUniformMatrix4fv(uniform, 1, false, &matrix[0][0]);
+}

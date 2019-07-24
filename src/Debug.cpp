@@ -5,7 +5,7 @@
 #include "Global.h"
 
 void TE::Debug::ToggleDebug(bool state) {
-    Global::Debug = state;
+    Global::debug = state;
 }
 
 void TE::Debug::Log(const std::string message) {
@@ -13,7 +13,7 @@ void TE::Debug::Log(const std::string message) {
 }
 
 void TE::Debug::Log(const std::string message, TE::Debug::Severity severity) {
-    if (!Global::Debug) return;
+    if (!Global::debug) return;
 
     std::string _message;
     switch (severity)

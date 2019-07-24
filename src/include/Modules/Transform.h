@@ -5,30 +5,43 @@
 #ifndef TWIG_ENGINE_TRANSFORM_H
 #define TWIG_ENGINE_TRANSFORM_H
 
-#include <glm/glm.hpp>
 #include "Module.h"
+#include "Types/Types.h"
 
 namespace TE {
     class Transform : public TE::Module {
-    private:
-        glm::vec3 position;
-        glm::vec3 rotation;
-        glm::vec3 scale;
-        glm::mat4 transformMatrix;
+    protected:
+        Vec3 position;
+        Vec3 rotation;
+        Vec3 scale;
+        Mat4 transformMatrix;
+
+        virtual void RecalculateMatrix();
 
     public:
-        Transform(GameObject *parent) : Module(parent) {}
+        Transform(GameObject *parent) : Module(parent) {
+            transformMatrix = Mat4(1.f);
+            SetPosition(Vec3(0.f,0.f,0.f));
+            SetRotation(Vec3(0.f,0.f,0.f));
+            SetScale(Vec3(1.f,1.f,1.f));
+        }
 
         glm::mat4& GetTransformMatrix();
 
-        const glm::vec3& GetPosition() const;
-        void SetPosition(const glm::vec3 &position);
+        const Vec3& GetPosition() const;
+        void SetPosition(const Vec3 &position);
 
-        const glm::vec3& GetRotation() const;
-        void SetRotation(const glm::vec3 &rotation);
+        const Vec3& GetRotation() const;
 
-        const glm::vec3& GetScale() const;
-        void SetScale(const glm::vec3 &scale);
+        virtual void SetRotation(const Vec3 &rotation);
+
+        const Vec3& GetScale() const;
+        void SetScale(const Vec3 &scale);
+
+        void Translate(Vec3 translation);
+
+        virtual void Rotate(Vec3 rotation);
+        void Scale(Vec3 scale);
     };
 }
 

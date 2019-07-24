@@ -12,7 +12,7 @@
 
 TE::VertexBufferObject* TE::VertexBufferObject::Create() {
     VertexBufferObject* VBO;
-    switch (Global::activeAPI)
+    switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:

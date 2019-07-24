@@ -66,21 +66,21 @@ bool Input::GetKeyHeld(Event *event, int key) {
 }
 
 bool Input::GetKeyPressed(int key) {
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_PRESS);
 
     return false;
 }
 
 bool Input::GetKeyReleased(int key) {
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_RELEASE);
 
     return false;
 }
 
 bool Input::GetKeyHeld(int key) {
-    if (Global::activeAPI == GraphicsAPI::OpenGL)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) != GLFW_RELEASE);
     }

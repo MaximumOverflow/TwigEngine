@@ -14,17 +14,31 @@
 namespace TE {
     class Camera : public GameObject {
     private:
-        Transform* transform = AddModule<Transform>();
+        Transform* transform = AddModule<CameraTransform>();
         glm::mat4 projection;
         FrameBufferObject* FBO = nullptr;
 
+        class CameraTransform : public Transform
+        {
+        private:
+            Vec3 forward = Vec3(0,0,-1), up = Vec3(0,1,0);
+        public:
+            void Rotate(Vec3 rotation) override;
+            CameraTransform(GameObject* gameObject) : Transform(gameObject) {};
+
+        protected:
+            void RecalculateMatrix() override;
+        };
+
     public:
         Camera();
+        Camera(TE::ProjectionMode projectionMode);
         ~Camera();
         void Bind();
         const glm::mat4& GetProjectionMatrix() const;
         const glm::mat4& GetTransformMatrix() const;
-        void SetFrameBuffer(FrameBufferObject* frameBufferObject);
+        void SetProjectionMode(ProjectionMode projectionMode);
+//        void SetFrameBuffer(FrameBufferObject* frameBufferObject);
     };
 
 }

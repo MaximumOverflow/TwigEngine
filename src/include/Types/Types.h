@@ -5,8 +5,7 @@
 #ifndef TWIG_ENGINE_TYPES_H
 #define TWIG_ENGINE_TYPES_H
 
-#include <cstdint>
-#include <algorithm>
+#include <glm/glm.hpp>
 
 #define BIT(x) (1<<x)
 
@@ -50,11 +49,22 @@ namespace TE {
         TE_4_BYTES,
         TE_DOUBLE
     };
+
     unsigned int LookupType(DataType type);
 
     enum class FileType {
         OBJ
     };
+
+    enum class ProjectionMode {
+        Ortho, Perspective
+    };
+
+    typedef glm::vec1 Vec1;
+    typedef glm::vec2 Vec2;
+    typedef glm::vec3 Vec3;
+    typedef glm::vec4 Vec4;
+    typedef glm::mat4 Mat4;
 }
 
 

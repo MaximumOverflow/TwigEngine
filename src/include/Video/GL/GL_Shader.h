@@ -20,6 +20,8 @@ public:
 
     void Bind() override;
     void Unbind() override;
+
+    void SetUniformMat4f(std::string name, const TE::Mat4& matrix) override;
 };
 
 

@@ -39,7 +39,7 @@ void EventHandler::RemoveEventListener(unsigned long& ID) {
 
 void EventHandler::PollEvents() {
 #ifndef TE_PLATFORM_MACOS
-    if (Global::activeAPI == GraphicsAPI::OpenGL || Global::activeAPI == GraphicsAPI::Vulkan)
+    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL || Global::GetActiveAPI() == GraphicsAPI::Vulkan)
         glfwPollEvents();
 #endif
 }
