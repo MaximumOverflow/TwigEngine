@@ -125,6 +125,11 @@ void Renderer::Draw(VertexArrayObject* VAO) {
         if (activeAPI == GraphicsAPI::OpenGL)
         {
             VAO->Bind();
+
+            defaultShader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
+            defaultShader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
+            defaultShader->SetUniformMat4f("te_model", Mat4(1.f));
+
             glDrawElements(GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
         }
 #endif

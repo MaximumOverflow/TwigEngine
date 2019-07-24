@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <Objects/GameObjects/Camera.h>
+#include <sstream>
 
 #include "Objects/GameObjects/Camera.h"
 #include "Video/Renderer.h"
@@ -41,34 +42,65 @@ const glm::mat4 &TE::Camera::GetTransformMatrix() const {
 //}
 
 void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
+    const Window* window = Renderer::GetWindow();
+    int w = window->width, h = window->height;
+
+    for(int i = w * h; i > 1; i--)
+        if((w % i) == 0 && (h % i) == 0)
+        {
+            w = w / i;
+            h = h / i;
+        }
+
+    float aspectRatio = (float) w/h;
+
     switch (projectionMode)
     {
         case ProjectionMode::Perspective:
-            Debug::Log("Perspective projection not yet supported, switching to ortho", Debug::Severity::Warning);
-            projection = glm::perspective(-75.f, 16/9.f, -1.f, 1.f);
+                projection = glm::perspective(-75.f, aspectRatio, -1.f, 1.f);
             break;
         case ProjectionMode::Ortho:
-            projection = glm::ortho( -8.f, 8.f, -4.5f, 4.5f, -1.f, 1000.f);
+            projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, -1.f, 1000.f);
             break;
     }
 }
 
 void TE::Camera::CameraTransform::Rotate(TE::Vec3 rotation) {
     this->rotation+=rotation;
+    if (this->rotation.x > 360) this->rotation.x -= 360;
+    if (this->rotation.x < -360) this->rotation.x += 360;
+    if (this->rotation.y > 360) this->rotation.y -= 360;
+    if (this->rotation.y < -360) this->rotation.y += 360;
+    if (this->rotation.z > 360) this->rotation.y -= 360;
+    if (this->rotation.z < -360) this->rotation.z += 360;
     RecalculateMatrix();
 }
 
 void TE::Camera::CameraTransform::RecalculateMatrix() {
-    glm::quat qPitch = glm::angleAxis(rotation.x, glm::vec3(1, 0, 0));
-    glm::quat qYaw = glm::angleAxis(rotation.y, glm::vec3(0, 1, 0));
-    glm::quat qRoll = glm::angleAxis(rotation.z,glm::vec3(0,0,1));
+    glm::quat qPitch = glm::angleAxis(glm::radians(rotation.x), Vec3(1, 0, 0));
+    glm::quat qYaw = glm::angleAxis(glm::radians(rotation.y), Vec3(0, 1, 0));
+    glm::quat qRoll = glm::angleAxis(glm::radians(rotation.z),Vec3(0,0,1));
 
     glm::quat orientation = qPitch * qYaw;
     orientation = glm::normalize(orientation);
-    glm::mat4 rotate = glm::mat4_cast(orientation);
+    forward = Vec3(0,0,-1) * orientation;
+    up = Vec3(0,1,0) * orientation;
 
-    glm::mat4 translate = glm::mat4(1.0f);
-    translate = glm::translate(translate, position);
+    transformMatrix = glm::lookAt(position, forward+position, up);
+}
 
-    transformMatrix = rotate * translate;
+void TE::Camera::CameraTransform::Translate(TE::Vec3 translation) {
+    position+=translation;
+    RecalculateMatrix();
+}
+
+void TE::Camera::CameraTransform::TranslateLocal(TE::Vec3 translation) {
+    glm::quat qPitch = glm::angleAxis(glm::radians(rotation.x), Vec3(1, 0, 0));
+    glm::quat qYaw = glm::angleAxis(glm::radians(rotation.y), Vec3(0, 1, 0));
+    glm::quat qRoll = glm::angleAxis(glm::radians(rotation.z),Vec3(0,0,1));
+    glm::quat orientation = qPitch * qYaw;
+    orientation = glm::normalize(orientation);
+
+    position+=translation*orientation;
+    RecalculateMatrix();
 }

@@ -143,6 +143,10 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     glfwSetWindowSizeCallback(window, TranslateEvents);
     glfwSetWindowIconifyCallback(window, TranslateEvents);
     glfwSetWindowMaximizeCallback(window, TranslateEventsMaximize);
+
+    this->width = width;
+    this->height = height;
+    this->title = title;
 }
 
 

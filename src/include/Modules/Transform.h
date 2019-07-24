@@ -38,7 +38,9 @@ namespace TE {
         const Vec3& GetScale() const;
         void SetScale(const Vec3 &scale);
 
-        void Translate(Vec3 translation);
+        virtual void Translate(Vec3 translation);
+
+        virtual void TranslateLocal(Vec3 translation);
 
         virtual void Rotate(Vec3 rotation);
         void Scale(Vec3 scale);

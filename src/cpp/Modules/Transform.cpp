@@ -4,6 +4,7 @@
 
 #include <Modules/Transform.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Modules/Transform.h"
 
@@ -25,7 +26,13 @@ const glm::vec3 &TE::Transform::GetRotation() const {
 }
 
 void TE::Transform::SetRotation(const glm::vec3 &rotation) {
-    Transform::rotation = rotation;
+    this->rotation = rotation;
+    if (this->rotation.x > 360) this->rotation.x -= 360;
+    if (this->rotation.x < -360) this->rotation.x += 360;
+    if (this->rotation.y > 360) this->rotation.y -= 360;
+    if (this->rotation.y < -360) this->rotation.y += 360;
+    if (this->rotation.z > 360) this->rotation.y -= 360;
+    if (this->rotation.z < -360) this->rotation.z += 360;
     RecalculateMatrix();
 }
 
@@ -38,16 +45,23 @@ void TE::Transform::SetScale(const glm::vec3 &scale) {
     RecalculateMatrix();
 }
 
-void TE::Transform::Translate(TE::Vec3 translation) {
+void TE::Transform::TranslateLocal(TE::Vec3 translation) {
     position+=translation;
     transformMatrix = glm::translate(transformMatrix, translation);
 }
 
 void TE::Transform::Rotate(TE::Vec3 rotation) {
     this->rotation+=rotation;
-    transformMatrix = glm::rotate(transformMatrix, rotation.x, Vec3(1,0,0));
-    transformMatrix = glm::rotate(transformMatrix, rotation.y, Vec3(0,1,0));
-    transformMatrix = glm::rotate(transformMatrix, rotation.z, Vec3(0,0,1));
+    if (this->rotation.x > 360) this->rotation.x -= 360;
+    if (this->rotation.x < -360) this->rotation.x += 360;
+    if (this->rotation.y > 360) this->rotation.y -= 360;
+    if (this->rotation.y < -360) this->rotation.y += 360;
+    if (this->rotation.z > 360) this->rotation.y -= 360;
+    if (this->rotation.z < -360) this->rotation.z += 360;
+
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.x), Vec3(1,0,0));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.y), Vec3(0,1,0));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.z), Vec3(0,0,1));
 }
 
 void TE::Transform::Scale(TE::Vec3 scale) {
@@ -60,9 +74,20 @@ void TE::Transform::RecalculateMatrix() {
 
     transformMatrix = glm::translate(transformMatrix, position);
 
-    transformMatrix = glm::rotate(transformMatrix, rotation.x, Vec3(1,0,0));
-    transformMatrix = glm::rotate(transformMatrix, rotation.y, Vec3(0,1,0));
-    transformMatrix = glm::rotate(transformMatrix, rotation.z, Vec3(0,0,1));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.x), Vec3(1,0,0));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.y), Vec3(0,1,0));
+    transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.z), Vec3(0,0,1));
 
     transformMatrix = glm::scale(transformMatrix, scale);
+}
+
+void TE::Transform::Translate(Vec3 translation) {
+    glm::quat qPitch = glm::angleAxis(glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    glm::quat qYaw = glm::angleAxis(glm::radians(rotation.y), glm::vec3(0, 1, 0));
+    glm::quat qRoll = glm::angleAxis(glm::radians(rotation.z),glm::vec3(0,0,1));
+    glm::quat orientation = qPitch * qYaw;
+    orientation = glm::normalize(orientation);
+
+    position+=translation*orientation;
+    transformMatrix = glm::translate(transformMatrix, translation*orientation);
 }
