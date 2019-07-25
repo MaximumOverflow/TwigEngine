@@ -9,6 +9,9 @@
 #include <glm/glm.hpp>
 #include <Objects/Mesh.h>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <External/tiny_obj_loader.h>
+
 
 using namespace TE;
 
@@ -21,6 +24,14 @@ Mesh::~Mesh() {
 Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     LoadModel(meshPath, fileType);
 
+    unsigned long p = 0, n = 0, t = 0;
+    unsigned long buffersize = (positions.size() + normals.size() + texCoords.size());
+
+    Debug::Log("Vertex buffer size: " + std::to_string(positions.size()));
+    Debug::Log("Normals buffer size: " + std::to_string(normals.size()));
+    Debug::Log("Texture buffer size: " + std::to_string(texCoords.size()));
+    Debug::Log("Total buffer size: " + std::to_string(buffersize));
+
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
@@ -28,11 +39,15 @@ Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VAO->LinkVertexBufferObject(VBO);
     VAO->LinkIndexBufferObject(IBO);
 
-    VBO->SetData(verteces.size(), verteces.data());
-    VBO->SetLayout(VertexBufferLayout(0, 3, TE_FLOAT, false, sizeof(float)*3, nullptr));
+    VBO->SetData(buffer.size(), buffer.data());
+    VBO->SetLayout({
+        {DataStructure::TE_VEC3, TE_FLOAT, "te_position"},
+        {DataStructure::TE_VEC2, TE_FLOAT, "te_texturePositions"},
+        {DataStructure::TE_VEC3, TE_FLOAT, "te_normals"},
+    });
     IBO->SetData(indeces.size(), indeces.data());
 
-    Debug::Log("Generated mesh containing " + std::to_string(verteces.size()) + " verteces from file: " + meshPath);
+    Debug::Log("Generated mesh containing " + std::to_string(positions.size()) + " verteces, with a " + std::to_string(buffersize) + " element buffer, from file: " + meshPath);
 }
 
 void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {
@@ -49,146 +64,38 @@ void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {
 }
 
 void Mesh::LoadOBJ(std::string meshPath) {
-    std::ifstream file;
-    file.open(meshPath);
-    if (!file.is_open())
-    {
-        Debug::Log("Could not read mesh file: " + meshPath, Debug::Severity::Error);
-        return;
-    }
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string err, warn;
+    tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshPath.c_str());
+    std::stringstream ss;
+    ss << "Positions: " << attrib.vertices.size() << "\tNormals: " << attrib.normals.size() << "\tTexture coordinates: " << attrib.texcoords.size();
+    Debug::Log(ss.str());
+    Debug::Log("Shapes: " + std::to_string(shapes.size()));
+    for (const auto& shape : shapes) {
+        for (const auto& index : shape.mesh.indices) {
+            indeces.push_back(indeces.size());
+            positions.push_back(attrib.vertices[3* index.vertex_index + 0]);
+            positions.push_back(attrib.vertices[3* index.vertex_index + 1]);
+            positions.push_back(attrib.vertices[3* index.vertex_index + 2]);
+            buffer.push_back(attrib.vertices[3* index.vertex_index + 0]);
+            buffer.push_back(attrib.vertices[3* index.vertex_index + 1]);
+            buffer.push_back(attrib.vertices[3* index.vertex_index + 2]);
 
-    std::vector<std::string> input;
-    std::string tmp;
-    while (file >> tmp)
-        input.push_back(tmp);
+            texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
+            texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
+            buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
+            buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
 
-    file.close();
-
-    std::vector<glm::vec3> _verteces;
-    std::vector<glm::vec2> _texCoords;
-    std::vector<glm::vec3> _normals;
-
-    std::vector<unsigned int> _indeces;
-    std::vector<glm::vec2> _texCoordsOrdered;
-    std::vector<glm::vec3> _normalsOrdered;
-
-    for (unsigned long i = 0; i < input.size(); i++)
-    {
-        std::string& current = input.at(i);
-
-        if (current == "v")
-        {
-            glm::vec3 vertex;
-            vertex.x = std::stof(input.at(++i));
-            vertex.y = std::stof(input.at(++i));
-            vertex.z = std::stof(input.at(++i));
-            _verteces.push_back(vertex);
-        }
-        else if (current == "vt")
-        {
-            glm::vec2 texCoord;
-            texCoord.x = std::stof(input.at(++i));
-            texCoord.y = std::stof(input.at(++i));
-            _texCoords.push_back(texCoord);
-        }
-        else if (current == "vn")
-        {
-            glm::vec3 normal;
-            normal.x = std::stof(input.at(++i));
-            normal.y = std::stof(input.at(++i));
-            normal.z = std::stof(input.at(++i));
-            _normals.push_back(normal);
-        }
-        else if (current == "f")
-        {
-            std::string v[3];
-            for (short j = 0; j < 3; j++)
-                v[j] = input.at(++i);
-
-            std::string v1[3];
-            std::string v2[3];
-            std::string v3[3];
-
-            short counter = 0;
-            //Get v1
-            std::string index;
-            for (short j = 0; j < v[0].size(); j++)
-            {
-                char c = v[0].at(j);
-                if (c != '/')
-                    index.push_back(c);
-                else
-                {
-                    v1[counter++] = index;
-                    index = "";
-                }
-            }
-            v1[counter++] = index;
-            index = "";
-
-            //Get v2
-            counter = 0;
-            for (short j = 0; j < v[1].size(); j++)
-            {
-                char c = v[1].at(j);
-                if (c != '/')
-                    index.push_back(c);
-                else {
-                    v2[counter++] = index;
-                    index = "";
-                }
-            }
-            v2[counter++] = index;
-            index = "";
-
-            //Get v3
-            counter = 0;
-            for (short j = 0; j < v[2].size(); j++)
-            {
-                char c = v[2].at(j);
-                if (c != '/')
-                    index.push_back(c);
-                else {
-                    v3[counter++] = index;
-                    index = "";
-                }
-            }
-            v3[counter++] = index;
-            index = "";
-
-            _indeces.push_back(std::stoul(v1[0]) -1);
-            if (!_texCoords.empty())
-                _texCoordsOrdered.push_back(_texCoords.at(std::stoul(v1[1]) -1));
-            _normalsOrdered.push_back(_normals.at(std::stoul(v1[2]) -1));
-
-            _indeces.push_back(std::stoul(v2[0]) -1);
-            if (!_texCoords.empty())
-                _texCoordsOrdered.push_back(_texCoords.at(std::stoul(v2[1]) -1));
-            _normalsOrdered.push_back(_normals.at(std::stoul(v2[2]) -1));
-
-            _indeces.push_back(std::stoul(v3[0]) -1);
-            if (!_texCoords.empty())
-                _texCoordsOrdered.push_back(_texCoords.at(std::stoul(v3[1]) -1));
-            _normalsOrdered.push_back(_normals.at(std::stoul(v3[2]) -1));
+            normals.push_back(attrib.normals[3 * index.normal_index + 0]);
+            normals.push_back(attrib.normals[3 * index.normal_index + 1]);
+            normals.push_back(attrib.normals[3 * index.normal_index + 2]);
+            buffer.push_back(attrib.normals[3 * index.normal_index + 0]);
+            buffer.push_back(attrib.normals[3 * index.normal_index + 1]);
+            buffer.push_back(attrib.normals[3 * index.normal_index + 2]);
         }
     }
-    for (auto& vertex : _verteces)
-    {
-        verteces.push_back(vertex.x);
-        verteces.push_back(vertex.y);
-        verteces.push_back(vertex.z);
-    }
-    for (auto& texCoord : _texCoordsOrdered)
-    {
-        texCoords.push_back(texCoord.x);
-        texCoords.push_back(texCoord.y);
-    }
-    for (auto& normal : _normalsOrdered)
-    {
-        normals.push_back(normal.x);
-        normals.push_back(normal.y);
-    }
-    indeces = _indeces;
 }
 
 TE::VertexArrayObject *Mesh::GetVAO() {

@@ -52,6 +52,16 @@ namespace TE {
 
     unsigned int LookupType(DataType type);
 
+    enum class DataStructure {
+        TE_VEC1,
+        TE_VEC2,
+        TE_VEC3,
+        TE_VEC4,
+        TE_MAT4,
+    };
+
+    unsigned int StructureSize(DataStructure dataStructure, DataType dataType);
+
     enum class FileType {
         OBJ
     };

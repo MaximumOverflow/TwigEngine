@@ -60,7 +60,7 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
                 projection = glm::perspective(-75.f, aspectRatio, -1.f, 1.f);
             break;
         case ProjectionMode::Ortho:
-            projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, -1.f, 1000.f);
+            projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, -1.f, 1.f);
             break;
     }
 }
@@ -68,11 +68,11 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
 void TE::Camera::CameraTransform::Rotate(TE::Vec3 rotation) {
     this->rotation+=rotation;
     if (this->rotation.x > 360) this->rotation.x -= 360;
-    if (this->rotation.x < -360) this->rotation.x += 360;
+    else if (this->rotation.x < -360) this->rotation.x += 360;
     if (this->rotation.y > 360) this->rotation.y -= 360;
-    if (this->rotation.y < -360) this->rotation.y += 360;
+    else if (this->rotation.y < -360) this->rotation.y += 360;
     if (this->rotation.z > 360) this->rotation.y -= 360;
-    if (this->rotation.z < -360) this->rotation.z += 360;
+    else if (this->rotation.z < -360) this->rotation.z += 360;
     RecalculateMatrix();
 }
 

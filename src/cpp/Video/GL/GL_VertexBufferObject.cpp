@@ -19,8 +19,13 @@ void GL_VertexBufferObject::Unbind() {
 
 void GL_VertexBufferObject::SetLayout(VertexBufferLayout layout) {
     glBindBuffer(GL_ARRAY_BUFFER, ID);
-    glVertexAttribPointer(layout.index, layout.size, layout.type, layout.normalized, layout.stride, layout.pointer);
-    glEnableVertexAttribArray(layout.index);
+    unsigned int index = 0;
+    for (auto& element : layout.GetElements())
+    {
+        glVertexAttribPointer(index, element.elements, LookupType(element.type), GL_FALSE, layout.stride, (const void*)element.offset);
+        glEnableVertexAttribArray(index);
+        index++;
+    }
     this->layout = layout;
 }
 

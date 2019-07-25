@@ -21,10 +21,11 @@ namespace TE {
 
         void LoadOBJ(std::string meshPath);
 
-        std::vector<float> verteces;
+        std::vector<float> positions;
         std::vector<float> texCoords;
         std::vector<float> normals;
         std::vector<unsigned int> indeces;
+        std::vector<float> buffer;
 
     public:
         Mesh(std::string meshPath, TE::FileType fileType);

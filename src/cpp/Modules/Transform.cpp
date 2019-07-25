@@ -28,11 +28,11 @@ const glm::vec3 &TE::Transform::GetRotation() const {
 void TE::Transform::SetRotation(const glm::vec3 &rotation) {
     this->rotation = rotation;
     if (this->rotation.x > 360) this->rotation.x -= 360;
-    if (this->rotation.x < -360) this->rotation.x += 360;
+    else if (this->rotation.x < -360) this->rotation.x += 360;
     if (this->rotation.y > 360) this->rotation.y -= 360;
-    if (this->rotation.y < -360) this->rotation.y += 360;
+    else if (this->rotation.y < -360) this->rotation.y += 360;
     if (this->rotation.z > 360) this->rotation.y -= 360;
-    if (this->rotation.z < -360) this->rotation.z += 360;
+    else if (this->rotation.z < -360) this->rotation.z += 360;
     RecalculateMatrix();
 }
 
@@ -53,11 +53,11 @@ void TE::Transform::TranslateLocal(TE::Vec3 translation) {
 void TE::Transform::Rotate(TE::Vec3 rotation) {
     this->rotation+=rotation;
     if (this->rotation.x > 360) this->rotation.x -= 360;
-    if (this->rotation.x < -360) this->rotation.x += 360;
+    else if (this->rotation.x < -360) this->rotation.x += 360;
     if (this->rotation.y > 360) this->rotation.y -= 360;
-    if (this->rotation.y < -360) this->rotation.y += 360;
+    else if (this->rotation.y < -360) this->rotation.y += 360;
     if (this->rotation.z > 360) this->rotation.y -= 360;
-    if (this->rotation.z < -360) this->rotation.z += 360;
+    else if (this->rotation.z < -360) this->rotation.z += 360;
 
     transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.x), Vec3(1,0,0));
     transformMatrix = glm::rotate(transformMatrix, glm::radians(rotation.y), Vec3(0,1,0));
