@@ -24,6 +24,8 @@ namespace TE {
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         virtual void SetUniformMat4f(std::string name, const Mat4& matrix) = 0;
+        virtual void SetUniformVec3f(std::string name, const Vec3& vec3) = 0;
+        virtual void SetUniformVec4f(std::string name, const Vec4& vec4) = 0;
 
         Shader() = default;
         virtual ~Shader() = default;

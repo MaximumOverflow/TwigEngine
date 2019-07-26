@@ -12,9 +12,12 @@ private:
     unsigned int ID;
 public:
     GL_FrameBufferObject();
+    ~GL_FrameBufferObject() override;
 
     void Bind() override;
     void Unbind() override;
+
+    void SetResolution(float width, float height) override;
 };
 
 

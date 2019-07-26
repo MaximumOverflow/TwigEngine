@@ -43,7 +43,8 @@ namespace TE {
         const glm::mat4& GetProjectionMatrix() const;
         const glm::mat4& GetTransformMatrix() const;
         void SetProjectionMode(ProjectionMode projectionMode);
-//        void SetFrameBuffer(FrameBufferObject* frameBufferObject);
+
+//        void SetFrameBuffer(FrameBufferObject* frameBufferObject) {FBO = frameBufferObject;};
     };
 
 }

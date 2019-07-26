@@ -57,10 +57,10 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
     switch (projectionMode)
     {
         case ProjectionMode::Perspective:
-                projection = glm::perspective(-75.f, aspectRatio, -1.f, 1.f);
+                projection = glm::perspective(-75.f, aspectRatio, 1.f, -1.f);
             break;
         case ProjectionMode::Ortho:
-            projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, -1.f, 1.f);
+            projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, 1.f, -1.f);
             break;
     }
 }

@@ -24,14 +24,6 @@ Mesh::~Mesh() {
 Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     LoadModel(meshPath, fileType);
 
-    unsigned long p = 0, n = 0, t = 0;
-    unsigned long buffersize = (positions.size() + normals.size() + texCoords.size());
-
-    Debug::Log("Vertex buffer size: " + std::to_string(positions.size()));
-    Debug::Log("Normals buffer size: " + std::to_string(normals.size()));
-    Debug::Log("Texture buffer size: " + std::to_string(texCoords.size()));
-    Debug::Log("Total buffer size: " + std::to_string(buffersize));
-
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
@@ -39,15 +31,17 @@ Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VAO->LinkVertexBufferObject(VBO);
     VAO->LinkIndexBufferObject(IBO);
 
+    if (buffer.size() == 0) return;
+
     VBO->SetData(buffer.size(), buffer.data());
     VBO->SetLayout({
         {DataStructure::TE_VEC3, TE_FLOAT, "te_position"},
-        {DataStructure::TE_VEC2, TE_FLOAT, "te_texturePositions"},
-        {DataStructure::TE_VEC3, TE_FLOAT, "te_normals"},
+        {DataStructure::TE_VEC2, TE_FLOAT, "te_texture_position"},
+        {DataStructure::TE_VEC3, TE_FLOAT, "te_normal"},
     });
     IBO->SetData(indeces.size(), indeces.data());
 
-    Debug::Log("Generated mesh containing " + std::to_string(positions.size()) + " verteces, with a " + std::to_string(buffersize) + " element buffer, from file: " + meshPath);
+    Debug::Log("Generated mesh containing " + std::to_string(positions.size()) + " verteces, with a " + std::to_string(buffer.size() * sizeof(float) / 1000000.f) + " MB buffer, from file: " + meshPath);
 }
 
 void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {
@@ -68,11 +62,11 @@ void Mesh::LoadOBJ(std::string meshPath) {
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string err, warn;
-    tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshPath.c_str());
-    std::stringstream ss;
-    ss << "Positions: " << attrib.vertices.size() << "\tNormals: " << attrib.normals.size() << "\tTexture coordinates: " << attrib.texcoords.size();
-    Debug::Log(ss.str());
-    Debug::Log("Shapes: " + std::to_string(shapes.size()));
+    if(!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshPath.c_str()))
+    {
+        Debug::Log("Could not load mesh: " + err, Debug::Severity::Error);
+        return;
+    }
     for (const auto& shape : shapes) {
         for (const auto& index : shape.mesh.indices) {
             indeces.push_back(indeces.size());

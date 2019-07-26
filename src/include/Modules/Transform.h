@@ -21,9 +21,7 @@ namespace TE {
     public:
         Transform(GameObject *parent) : Module(parent) {
             transformMatrix = Mat4(1.f);
-            SetPosition(Vec3(0.f,0.f,0.f));
-            SetRotation(Vec3(0.f,0.f,0.f));
-            SetScale(Vec3(1.f,1.f,1.f));
+            Reset();
         }
 
         glm::mat4& GetTransformMatrix();
@@ -44,6 +42,8 @@ namespace TE {
 
         virtual void Rotate(Vec3 rotation);
         void Scale(Vec3 scale);
+
+        void Reset();
     };
 }
 

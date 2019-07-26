@@ -14,21 +14,25 @@
 #include "IndexBufferObject.h"
 #include "Shader.h"
 #include "Objects/GameObjects/Camera.h"
+#include "Objects/GameObjects/Light.h"
 
 namespace TE {
     class Renderer {
     private:
         static Window* window;
         static Window* CreateWindow(unsigned int width, unsigned int height, std::string title);
-        static Shader* defaultShader;
-        static std::vector<Camera*> cameras;
 
+        static std::vector<Camera*> cameras;
+        static std::vector<Light*> lights;
+
+        static Shader* defaultShader;
+        static std::string defaultVertex, defaultFragment;
+        static void CompileDefaultShader();
     public:
         static int Init(GraphicsAPI API);
         static int Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title);
         static void Terminate();
 
-        static void UseGraphicsAPI(GraphicsAPI API);
         static GraphicsAPI GetCurrentAPI();
         static bool WindowIsOpen();
         static const Window* GetWindow();
@@ -37,10 +41,15 @@ namespace TE {
         static void AddCamera(Camera* camera);
         static void RemoveCamera(Camera* camera);
 
+        static void AddLight(Light* light);
+        static void RemoveLight(Light* light);
+
         static void Draw(VertexArrayObject* VAO);
         static void Draw(GameObject* gameObject);
         static void Clear();
         static void SwapBuffers();
+        static void SetSwapInterval(short interval);
+        static bool wireframe;
     };
 }
 

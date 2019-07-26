@@ -4,11 +4,15 @@
 
 #ifndef TWIG_ENGINE_INPUT_H
 #define TWIG_ENGINE_INPUT_H
+
+#include <Modules/EventListener.h>
 #include "Events/Event.h"
 
 namespace TE {
     class Input {
     public:
+        static void SetMouseCursorShown(bool mode);
+
         static bool GetMouseButtonPressed(Event *event, int button);
         static bool GetMouseButtonReleased(Event *event, int button);
         static bool GetMouseButtonHeld(Event *event, int button);

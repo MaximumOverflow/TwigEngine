@@ -20,7 +20,7 @@ namespace TE {
         static void TranslateEvents(GLFWwindow* window, int button, int action, int mods); //GLFW Mouse Button Events
         //GLFW Window events
         static void TranslateEvents(GLFWwindow *window); //Close
-        static void TranslateEvents(GLFWwindow *window, int width, int height); //Resize
+        static void HandleAndTranslateEvents(GLFWwindow *window, int width, int height); //Resize
         static void TranslateEvents(GLFWwindow *window, int minimized); //Minimize
         static void TranslateEventsMaximize(GLFWwindow *window, int maximized); //Maximize
 
@@ -34,7 +34,7 @@ namespace TE {
 
         void SwapBuffers();
         bool IsOpen() override;
-        GLFWwindow* GetGLFWWindowPointer();
+        GLFWwindow* GetGLFWWindowPointer() const;
     };
 }
 #endif //TWIG_ENGINE_GL_WINDOW_H

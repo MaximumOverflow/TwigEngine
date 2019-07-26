@@ -8,6 +8,7 @@ using namespace TE;
 bool Global::debug;
 GraphicsAPI Global::activeAPI;
 float Global::timedUpdateInterval = 1;
+unsigned int Global::maxSimultaneousLights = 5;
 
 bool Global::GetDebugState() {
     return debug;

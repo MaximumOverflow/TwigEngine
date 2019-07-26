@@ -42,3 +42,4 @@ unsigned int TE::StructureSize(TE::DataStructure dataStructure, TE::DataType dat
         default: return 0;
     }
 }
+

@@ -129,8 +129,12 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     glfwShowWindow(window);
     glDebugMessageCallback(GLDebugMessageCallback, nullptr);
     glEnable(GL_DEBUG_OUTPUT);
+
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
 
     Debug::Log("Setting up GLFW callbacks...");
     //Input callbacks
@@ -140,9 +144,11 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     glfwSetScrollCallback(window, TranslateEventsScroll);
     //Window callbacks
     glfwSetWindowCloseCallback(window, TranslateEvents);
-    glfwSetWindowSizeCallback(window, TranslateEvents);
+    glfwSetWindowSizeCallback(window, HandleAndTranslateEvents);
     glfwSetWindowIconifyCallback(window, TranslateEvents);
     glfwSetWindowMaximizeCallback(window, TranslateEventsMaximize);
+
+    glfwSetCursorPos(window, 0,0);
 
     this->width = width;
     this->height = height;
@@ -206,8 +212,10 @@ void GL_Window::TranslateEvents(GLFWwindow *window) {
     EventHandler::DispatchEvent(new WindowClosedEvent());
 }
 
-void GL_Window::TranslateEvents(GLFWwindow *window, int width, int height) {
+void GL_Window::HandleAndTranslateEvents(GLFWwindow *window, int width, int height) {
     EventHandler::DispatchEvent(new WindowResizedEvent(width, height));
+    glViewport(0,0, width, height);
+    glScissor(0,0,width,height);
 }
 
 void GL_Window::TranslateEvents(GLFWwindow *window, int minimized) {
@@ -218,6 +226,6 @@ void GL_Window::TranslateEventsMaximize(GLFWwindow *window, int maximized) {
     EventHandler::DispatchEvent(new WindowMaximizedEvent((bool) maximized));
 }
 
-GLFWwindow* GL_Window::GetGLFWWindowPointer() {
+GLFWwindow* GL_Window::GetGLFWWindowPointer() const {
     return window;
 }

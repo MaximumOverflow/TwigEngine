@@ -21,6 +21,8 @@
 
 namespace TE {
     class Overlay : public Layer {
+    private:
+        static void SetImGuiStyle();
     protected:
         static bool ImGuiInitialized;
         static unsigned int overlayCount;
@@ -36,7 +38,6 @@ namespace TE {
         static void NewFrame();
         static void EndFrame();
         static unsigned int GetOverlayCount() { return overlayCount; };
-
 
     };
 }

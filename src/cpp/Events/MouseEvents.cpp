@@ -4,12 +4,18 @@
 #include "Events/MouseEvents.h"
 using namespace TE;
 
+double MouseEvent::x, MouseEvent::y;
+
 int MouseEvent::GetCategories() {
     return EventCategory::MouseEvent;
 }
 
 TE::EventType MouseMovedEvent::GetType() {
     return EventType::MouseMove;
+}
+
+Vec2 MouseEvent::GetMousePosition() {
+    return TE::Vec2(x, y);
 }
 
 EventType MouseButtonPressedEvent::GetType() {

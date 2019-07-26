@@ -1,15 +1,12 @@
 //
 // Created by max on 21/07/19.
 //
-
-#include <Input.h>
-
 #include "Input.h"
-
 #include "Events/MouseEvents.h"
 #include "Events/KeyboardEvents.h"
 #include "Video/Renderer.h"
 #include "Global.h"
+#include "TE_Macros.h"
 
 #ifndef TE_PLATFORM_MACOS
 #include "Video/GL/GL_Window.h"
@@ -66,24 +63,38 @@ bool Input::GetKeyHeld(Event *event, int key) {
 }
 
 bool Input::GetKeyPressed(int key) {
+#ifndef TE_PLATFORM_MACOS
     if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_PRESS);
-
+#endif
     return false;
 }
 
 bool Input::GetKeyReleased(int key) {
+#ifndef TE_PLATFORM_MACOS
     if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_RELEASE);
-
+#endif
     return false;
 }
 
 bool Input::GetKeyHeld(int key) {
+#ifndef TE_PLATFORM_MACOS
     if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
         return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) != GLFW_RELEASE);
     }
-
+#endif
     return false;
+}
+
+void Input::SetMouseCursorShown(bool mode) {
+    switch (Global::GetActiveAPI()) {
+#ifndef TE_PLATFORM_MACOS
+        case GraphicsAPI::OpenGL:
+        case GraphicsAPI::Vulkan:
+            glfwSetInputMode(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), GLFW_CURSOR, mode ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+            break;
+#endif
+    }
 }

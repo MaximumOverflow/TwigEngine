@@ -7,14 +7,15 @@
 
 namespace TE {
     class FrameBufferObject {
-    private:
-        unsigned int ID;
+    protected:
+        float width = 0, height = 0;
     public:
-        static FrameBufferObject* Create();
+        static FrameBufferObject* Create(float width = 0, float height = 0);
         virtual ~FrameBufferObject() = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
+        virtual void SetResolution(float width, float height) = 0;
     };
 }
 

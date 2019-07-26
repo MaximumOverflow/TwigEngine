@@ -75,6 +75,11 @@ namespace TE {
     typedef glm::vec3 Vec3;
     typedef glm::vec4 Vec4;
     typedef glm::mat4 Mat4;
+
+    struct Color {
+        float r, g, b, a;
+        Color(float r, float g, float b, float a = 1) : r(r), g(g), b(b), a{a} {};
+    };
 }
 
 

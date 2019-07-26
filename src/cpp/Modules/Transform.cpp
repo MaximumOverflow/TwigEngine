@@ -91,3 +91,10 @@ void TE::Transform::Translate(Vec3 translation) {
     position+=translation*orientation;
     transformMatrix = glm::translate(transformMatrix, translation*orientation);
 }
+
+void TE::Transform::Reset() {
+    position = Vec3(0.f,0.f,0.f);
+    rotation = Vec3(0.f,0.f,0.f);
+    scale = Vec3(1.f,1.f,1.f);
+    RecalculateMatrix();
+}

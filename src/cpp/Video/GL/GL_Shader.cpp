@@ -70,6 +70,7 @@ void GL_Shader::Unbind() {
 }
 
 void GL_Shader::SetUniformMat4f(std::string name, const Mat4& matrix) {
+    glUseProgram(ID);
     int uniform = GetUniformFromCache(name);
     if (uniform < 0)
     {
@@ -77,4 +78,26 @@ void GL_Shader::SetUniformMat4f(std::string name, const Mat4& matrix) {
         AddUniformToCache(name, uniform);
     }
     glUniformMatrix4fv(uniform, 1, false, &matrix[0][0]);
+}
+
+void GL_Shader::SetUniformVec3f(std::string name, const Vec3& vec3) {
+    glUseProgram(ID);
+    int uniform = GetUniformFromCache(name);
+    if (uniform < 0)
+    {
+        uniform = glGetUniformLocation(ID, name.c_str());
+        AddUniformToCache(name, uniform);
+    }
+    glUniform3fv(uniform, 1, &vec3[0]);
+}
+
+void GL_Shader::SetUniformVec4f(std::string name, const Vec4 &vec4) {
+    glUseProgram(ID);
+    int uniform = GetUniformFromCache(name);
+    if (uniform < 0)
+    {
+        uniform = glGetUniformLocation(ID, name.c_str());
+        AddUniformToCache(name, uniform);
+    }
+    glUniform4fv(uniform, 1, &vec4[0]);
 }
