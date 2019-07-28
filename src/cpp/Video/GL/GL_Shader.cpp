@@ -101,3 +101,14 @@ void GL_Shader::SetUniformVec4f(std::string name, const Vec4 &vec4) {
     }
     glUniform4fv(uniform, 1, &vec4[0]);
 }
+
+void GL_Shader::SetUniformVec1i(std::string name, int vec1) {
+    glUseProgram(ID);
+    int uniform = GetUniformFromCache(name);
+    if (uniform < 0)
+    {
+        uniform = glGetUniformLocation(ID, name.c_str());
+        AddUniformToCache(name, uniform);
+    }
+    glUniform1i(uniform, vec1);
+}

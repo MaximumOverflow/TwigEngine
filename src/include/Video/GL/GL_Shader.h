@@ -25,6 +25,8 @@ namespace TE {
         void SetUniformMat4f(std::string name, const TE::Mat4& matrix) override;
         void SetUniformVec3f(std::string name, const TE::Vec3& vec3) override;
         void SetUniformVec4f(std::string name, const Vec4 &vec4) override;
+
+        void SetUniformVec1i(std::string name, int vec1) override;
     };
 }
 

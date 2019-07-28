@@ -17,6 +17,7 @@ namespace TE {
         VkInstance vkInstance;
         VkApplicationInfo vkApplicationInfo = {};
         VkInstanceCreateInfo vkInstanceCreateInfo = {};
+        VkPhysicalDevice vkPhysicalDevice;
 
         //GLFW Input events
         static void TranslateEvents(GLFWwindow* window, int key, int scancode, int action, int mods); //GLFW Key Events

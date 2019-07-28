@@ -33,3 +33,11 @@ Shader* MeshRenderer::GetShader() const {
 VertexArrayObject* MeshRenderer::GetMeshVAO() {
     return mesh->GetVAO();
 }
+
+Texture *MeshRenderer::GetTexture() const {
+    return texture;
+}
+
+void MeshRenderer::SetTexture(Texture *texture) {
+    this->texture = texture;
+}

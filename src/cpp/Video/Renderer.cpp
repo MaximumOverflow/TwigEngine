@@ -14,6 +14,7 @@
     #include "Video/GL/GL_VertexBufferObject.h"
     #include "Video/GL/GL_IndexBufferObject.h"
     #include "Video/GL/GL_Shader.h"
+    #include "Video/GL/GL_Texture.h"
 #endif
 
 #include <exception>
@@ -125,6 +126,7 @@ void Renderer::Draw(GameObject *gameObject) {
     MeshRenderer* meshRenderer = gameObject->GetModule<MeshRenderer>();
     VertexArrayObject* vao = meshRenderer->GetMeshVAO();
     Shader* shader = meshRenderer->GetShader();
+    Texture* texture = meshRenderer->GetTexture();
     Transform* transform = gameObject->GetModule<Transform>();
     vao->Bind();
 
@@ -147,6 +149,15 @@ void Renderer::Draw(GameObject *gameObject) {
                 shader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
             else
                 shader->SetUniformMat4f("te_model", Mat4());
+
+            if (texture != nullptr)
+            {
+                texture->Bind();
+#ifndef TE_PLATFORM_MACOS
+                if (activeAPI == GraphicsAPI::OpenGL)
+                    shader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
+#endif
+            }
         }
         else
         {
@@ -156,6 +167,15 @@ void Renderer::Draw(GameObject *gameObject) {
                 defaultShader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
             else
                 defaultShader->SetUniformMat4f("te_model", Mat4());
+
+            if (texture != nullptr)
+            {
+                texture->Bind();
+#ifndef TE_PLATFORM_MACOS
+                if (activeAPI == GraphicsAPI::OpenGL)
+                    defaultShader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
+#endif
+            }
         }
 
         unsigned short i = 0;
@@ -264,6 +284,7 @@ void Renderer::CompileDefaultShader() {
             "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
             "\n"
             "out vec3 te_frag_normal, te_frag_position;\n"
+            "out vec2 te_frag_texture_position;\n"
             "\n"
             "void main()\n"
             "{\n"
@@ -271,6 +292,7 @@ void Renderer::CompileDefaultShader() {
             "   gl_Position = pos;\n"
             "   te_frag_position = (te_model * vec4(te_position, 1.0)).xyz;\n"
             "   te_frag_normal = te_normal;\n"
+            "   te_frag_texture_position = te_texture_position;\n"
             "}"
     };
 
@@ -278,8 +300,10 @@ void Renderer::CompileDefaultShader() {
             "#version 330 core\n"
             "\n"
             "in vec3 te_frag_normal, te_frag_position;\n"
+            "in vec2 te_frag_texture_position;\n"
             "uniform vec3 te_light_position[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
             "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
+            "uniform sampler2D te_texture_slot;\n"
             "\n"
             "out vec4 color;\n"
             "\n"
@@ -294,9 +318,11 @@ void Renderer::CompileDefaultShader() {
             "       float distance = abs(distance(te_light_position[i], te_frag_position)) / te_light_color[i].w;"
             "       "
             "       vec3 lightDir = normalize(te_light_position[i] - te_frag_position);\n"
-            "       light += (te_light_color[i] * max(dot(normal, lightDir),0.2f)) / distance ;\n"
+            "       light += (te_light_color[i] * max(dot(normal, lightDir),0.1f)) / distance ;\n"
             "   }\n"
-            "   color = light;\n"
+            "   vec4 textureColor = texture(te_texture_slot, te_frag_texture_position);\n"
+            "   color = textureColor * light;\n"
+//            "   color = textureColor;\n"
             "}"
     };
     delete defaultShader;

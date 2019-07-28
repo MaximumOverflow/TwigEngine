@@ -5,8 +5,9 @@
 #ifndef TWIG_ENGINE_MESHRENDERER_H
 #define TWIG_ENGINE_MESHRENDERER_H
 
-#include "Video/Shader.h"
+#include "Video/Texture.h"
 #include "Objects/Mesh.h"
+#include "Video/Shader.h"
 #include "Module.h"
 
 namespace TE {
@@ -14,6 +15,7 @@ namespace TE {
     private:
         Mesh* mesh = nullptr;
         Shader* shader = nullptr;
+        Texture* texture = nullptr;
     public:
         double customDrawDistance = 0;
 
@@ -22,6 +24,9 @@ namespace TE {
 
         void SetShader(Shader *shader);
         Shader* GetShader() const;
+
+        void SetTexture(Texture* texture);
+        Texture* GetTexture() const;
 
         VertexArrayObject* GetMeshVAO();
 

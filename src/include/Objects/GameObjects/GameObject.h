@@ -39,7 +39,7 @@ namespace TE {
         T* GetModule() {
             for (auto &m : modules) {
                 T* module = dynamic_cast<T*>(m);
-                if (module)
+                if (module != nullptr)
                     return module;
             }
             return nullptr;
