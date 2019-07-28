@@ -136,6 +136,9 @@ void Renderer::Draw(GameObject *gameObject) {
 
         Transform* view = camera->GetModule<Transform>();
 
+        if (glm::distance(transform->GetPosition(), view->GetPosition()) > (meshRenderer->customDrawDistance != 0 ? meshRenderer->customDrawDistance : camera->drawDistance))
+            continue;
+
         if (shader != nullptr)
         {
             shader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
@@ -161,22 +164,20 @@ void Renderer::Draw(GameObject *gameObject) {
         {
             auto* lightTransform = light->GetModule<Transform>();
 
-            if (transform != nullptr && i < Global::maxSimultaneousLights)
+            auto lightPos = lightTransform->GetPosition();
+            if (glm::distance(transform != nullptr? transform->GetPosition() : Vec3(0,0,0), lightPos) < light->drawDistance)
             {
-                auto pos = lightTransform->GetPosition();
-                if (glm::distance(transform->GetPosition(), pos) < 200){
-                    if (shader != nullptr)
-                    {
-                        shader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", pos);
-                        shader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
-                    }
-                    else
-                    {
-                        defaultShader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", pos);
-                        defaultShader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
-                    }
-                    i++;
+                if (shader != nullptr)
+                {
+                    shader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
+                    shader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
                 }
+                else
+                {
+                    defaultShader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
+                    defaultShader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
+                }
+                i++;
             }
         }
 
@@ -263,8 +264,6 @@ void Renderer::CompileDefaultShader() {
             "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
             "\n"
             "out vec3 te_frag_normal, te_frag_position;\n"
-            "out vec3 te_frag_light_position[" + std::to_string(Global::maxSimultaneousLights) + "]; \n"
-            "out vec4 te_frag_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
             "\n"
             "void main()\n"
             "{\n"
@@ -272,11 +271,6 @@ void Renderer::CompileDefaultShader() {
             "   gl_Position = pos;\n"
             "   te_frag_position = (te_model * vec4(te_position, 1.0)).xyz;\n"
             "   te_frag_normal = te_normal;\n"
-            "   for (int i = 0; i < " + std::to_string(Global::maxSimultaneousLights) + "; i++)\n"
-            "   {\n"
-            "       te_frag_light_position[i] = te_light_position[i];\n"
-            "       te_frag_light_color[i] = te_light_color[i];\n"
-            "   }\n"
             "}"
     };
 
@@ -284,8 +278,8 @@ void Renderer::CompileDefaultShader() {
             "#version 330 core\n"
             "\n"
             "in vec3 te_frag_normal, te_frag_position;\n"
-            "in vec3 te_frag_light_position[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
-            "in vec4 te_frag_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
+            "uniform vec3 te_light_position[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
+            "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
             "\n"
             "out vec4 color;\n"
             "\n"
@@ -297,10 +291,10 @@ void Renderer::CompileDefaultShader() {
             "{\n"
             "   for (int i = 0; i < " + std::to_string(Global::maxSimultaneousLights) + "; i++)\n"
             "   {\n"
-            "       float distance = abs(distance(te_frag_light_position[i], te_frag_position)) / 20;"
+            "       float distance = abs(distance(te_light_position[i], te_frag_position)) / te_light_color[i].w;"
             "       "
-            "       vec3 lightDir = normalize(te_frag_light_position[i] - te_frag_position);\n"
-            "       light += te_frag_light_color[i] / distance  * max(dot(normal, lightDir),0.0f);\n"
+            "       vec3 lightDir = normalize(te_light_position[i] - te_frag_position);\n"
+            "       light += (te_light_color[i] * max(dot(normal, lightDir),0.2f)) / distance ;\n"
             "   }\n"
             "   color = light;\n"
             "}"
@@ -318,4 +312,9 @@ void Renderer::RemoveLight(Light *light) {
     auto index = std::find(lights.begin(), lights.end(), light);
     lights.erase(index);
     Debug::Log("Removed camera \"" + light->name + "\"");
+}
+
+void Renderer::SetMaximumSimultaneousLights(unsigned int lightCount) {
+    Global::maxSimultaneousLights = lightCount;
+    CompileDefaultShader();
 }

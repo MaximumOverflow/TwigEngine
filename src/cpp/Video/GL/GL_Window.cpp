@@ -148,11 +148,12 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     glfwSetWindowIconifyCallback(window, TranslateEvents);
     glfwSetWindowMaximizeCallback(window, TranslateEventsMaximize);
 
-    glfwSetCursorPos(window, 0,0);
 
     this->width = width;
     this->height = height;
     this->title = title;
+
+    glfwSetCursorPos(window, width/2,height/2);
 }
 
 

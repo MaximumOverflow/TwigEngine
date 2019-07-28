@@ -24,11 +24,8 @@ namespace TE {
             Vec3 forward = Vec3(0,0,-1), up = Vec3(0,1,0);
         public:
             void Rotate(Vec3 rotation) override;
-
             void Translate(Vec3 translation) override;
-
             void TranslateLocal(Vec3 translation) override;
-
             CameraTransform(GameObject* gameObject) : Transform(gameObject) {};
 
         protected:
@@ -43,6 +40,7 @@ namespace TE {
         const glm::mat4& GetProjectionMatrix() const;
         const glm::mat4& GetTransformMatrix() const;
         void SetProjectionMode(ProjectionMode projectionMode);
+        double drawDistance = 500;
 
 //        void SetFrameBuffer(FrameBufferObject* frameBufferObject) {FBO = frameBufferObject;};
     };

@@ -17,6 +17,7 @@ namespace TE {
         ~Light();
 
         Vec4 color;
+        double drawDistance = 500;
     };
 }
 

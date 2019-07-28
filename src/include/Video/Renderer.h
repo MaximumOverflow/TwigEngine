@@ -43,6 +43,7 @@ namespace TE {
 
         static void AddLight(Light* light);
         static void RemoveLight(Light* light);
+        static void SetMaximumSimultaneousLights(unsigned int lightCount);
 
         static void Draw(VertexArrayObject* VAO);
         static void Draw(GameObject* gameObject);

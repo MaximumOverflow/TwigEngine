@@ -11,6 +11,7 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <External/tiny_obj_loader.h>
+#include <Global.h>
 
 
 using namespace TE;
@@ -21,9 +22,17 @@ Mesh::~Mesh() {
     delete IBO;
 }
 
-Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
-    LoadModel(meshPath, fileType);
 
+Mesh::Mesh() {
+    VAO = VertexArrayObject::Create();
+    VBO = VertexBufferObject::Create();
+    IBO = IndexBufferObject::Create();
+
+    VAO->LinkVertexBufferObject(VBO);
+    VAO->LinkIndexBufferObject(IBO);
+}
+
+Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
@@ -31,16 +40,9 @@ Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VAO->LinkVertexBufferObject(VBO);
     VAO->LinkIndexBufferObject(IBO);
 
-    if (buffer.size() == 0) return;
+    LoadModel(meshPath, fileType);
 
-    VBO->SetData(buffer.size(), buffer.data());
-    VBO->SetLayout({
-        {DataStructure::TE_VEC3, TE_FLOAT, "te_position"},
-        {DataStructure::TE_VEC2, TE_FLOAT, "te_texture_position"},
-        {DataStructure::TE_VEC3, TE_FLOAT, "te_normal"},
-    });
-    IBO->SetData(indeces.size(), indeces.data());
-
+    ClearSingleBuffers();
     Debug::Log("Generated mesh containing " + std::to_string(positions.size()) + " verteces, with a " + std::to_string(buffer.size() * sizeof(float) / 1000000.f) + " MB buffer, from file: " + meshPath);
 }
 
@@ -55,6 +57,21 @@ void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {
             Debug::Log("Unsupported mesh file format", Debug::Severity::Error);
             return;
     }
+
+    if (buffer.size() == 0) return;
+
+    VBO->SetData(buffer.size(), buffer.data());
+
+    VBO->SetLayout({
+                           {DataStructure::TE_VEC3, TE_FLOAT, "te_position"},
+                   });
+
+    if (!texCoords.empty())
+        VBO->AddLayoutElement({DataStructure::TE_VEC2, TE_FLOAT, "te_texture_position"});
+    if (!normals.empty())
+        VBO->AddLayoutElement({DataStructure::TE_VEC3, TE_FLOAT, "te_normal"});
+
+    IBO->SetData(indeces.size(), indeces.data());
 }
 
 void Mesh::LoadOBJ(std::string meshPath) {
@@ -77,17 +94,23 @@ void Mesh::LoadOBJ(std::string meshPath) {
             buffer.push_back(attrib.vertices[3* index.vertex_index + 1]);
             buffer.push_back(attrib.vertices[3* index.vertex_index + 2]);
 
-            texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
-            texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
-            buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
-            buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
+            if (!attrib.texcoords.empty())
+            {
+                texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
+                texCoords.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
+                buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
+                buffer.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
+            }
 
-            normals.push_back(attrib.normals[3 * index.normal_index + 0]);
-            normals.push_back(attrib.normals[3 * index.normal_index + 1]);
-            normals.push_back(attrib.normals[3 * index.normal_index + 2]);
-            buffer.push_back(attrib.normals[3 * index.normal_index + 0]);
-            buffer.push_back(attrib.normals[3 * index.normal_index + 1]);
-            buffer.push_back(attrib.normals[3 * index.normal_index + 2]);
+            if (!attrib.normals.empty())
+            {
+                normals.push_back(attrib.normals[3 * index.normal_index + 0]);
+                normals.push_back(attrib.normals[3 * index.normal_index + 1]);
+                normals.push_back(attrib.normals[3 * index.normal_index + 2]);
+                buffer.push_back(attrib.normals[3 * index.normal_index + 0]);
+                buffer.push_back(attrib.normals[3 * index.normal_index + 1]);
+                buffer.push_back(attrib.normals[3 * index.normal_index + 2]);
+            }
         }
     }
 }
@@ -95,3 +118,13 @@ void Mesh::LoadOBJ(std::string meshPath) {
 TE::VertexArrayObject *Mesh::GetVAO() {
     return VAO;
 }
+
+void Mesh::ClearSingleBuffers() {
+    if (!Global::GetDebugState())
+    {
+        positions.clear();
+        normals.clear();
+        texCoords.clear();
+    }
+}
+

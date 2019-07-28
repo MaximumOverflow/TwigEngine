@@ -24,6 +24,7 @@ namespace TE {
 
         void SetLayout(VertexBufferLayout layout) override;
         void SetData(uint32_t elements, float* data) override;
+        void AddLayoutElement(VertexBufferLayoutElement element) override;
     };
 }
 

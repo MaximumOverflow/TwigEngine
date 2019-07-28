@@ -40,3 +40,15 @@ TE::VertexBufferLayout::VertexBufferLayout(std::initializer_list<TE::VertexBuffe
         stride+=element.size;
     }
 }
+
+void TE::VertexBufferLayout::AddElement(TE::VertexBufferLayoutElement element) {
+    layoutElements.push_back(element);
+    unsigned int offset = 0;
+    stride = 0;
+    for (auto& _element : this->layoutElements)
+    {
+        _element.offset = offset;
+        offset+=_element.size;
+        stride+=_element.size;
+    }
+}

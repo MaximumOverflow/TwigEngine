@@ -47,3 +47,15 @@ GL_VertexBufferObject::~GL_VertexBufferObject() {
 unsigned long GL_VertexBufferObject::GetID() {
     return ID;
 }
+
+void GL_VertexBufferObject::AddLayoutElement(VertexBufferLayoutElement element) {
+    layout.AddElement(element);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
+    unsigned int index = 0;
+    for (auto& element : layout.GetElements())
+    {
+        glVertexAttribPointer(index, element.elements, LookupType(element.type), GL_FALSE, layout.stride, (const void*)element.offset);
+        glEnableVertexAttribArray(index);
+        index++;
+    }
+}

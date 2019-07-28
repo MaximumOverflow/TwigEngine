@@ -16,6 +16,7 @@ namespace TE {
         static bool debug;
         static GraphicsAPI activeAPI;
         static float timedUpdateInterval;
+
         static unsigned int maxSimultaneousLights;
     public:
         static bool GetDebugState();

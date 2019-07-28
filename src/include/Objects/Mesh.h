@@ -20,6 +20,7 @@ namespace TE {
         IndexBufferObject* IBO;
 
         void LoadOBJ(std::string meshPath);
+        void ClearSingleBuffers();
 
         std::vector<float> positions;
         std::vector<float> texCoords;
@@ -29,6 +30,7 @@ namespace TE {
 
     public:
         Mesh(std::string meshPath, TE::FileType fileType);
+        Mesh();
         void LoadModel(std::string meshPath, TE::FileType fileType);
         TE::VertexArrayObject* GetVAO();
         ~Mesh();

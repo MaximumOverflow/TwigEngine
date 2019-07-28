@@ -15,8 +15,9 @@ namespace TE {
         Mesh* mesh = nullptr;
         Shader* shader = nullptr;
     public:
-        MeshRenderer(GameObject* parent) : Module(parent) {};
+        double customDrawDistance = 0;
 
+        MeshRenderer(GameObject* parent) : Module(parent) {};
         void SetMesh(Mesh* mesh);
 
         void SetShader(Shader *shader);

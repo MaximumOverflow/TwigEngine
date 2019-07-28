@@ -44,6 +44,7 @@ namespace TE {
 
         VertexBufferLayout(std::initializer_list<VertexBufferLayoutElement> elements);
         const auto& GetElements() const { return layoutElements; }
+        void AddElement(VertexBufferLayoutElement element);
     };
 
     class VertexBufferObject {
@@ -56,6 +57,7 @@ namespace TE {
         virtual unsigned long GetID() = 0;
 
         virtual void SetLayout(VertexBufferLayout layout) = 0;
+        virtual void AddLayoutElement(VertexBufferLayoutElement element) = 0;
         virtual void SetData(uint32_t elements, float* data) = 0;
     };
 }
