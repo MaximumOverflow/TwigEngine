@@ -37,10 +37,6 @@ const glm::mat4 &TE::Camera::GetTransformMatrix() const {
     return transform->GetTransformMatrix();
 }
 
-//void TE::Camera::SetFrameBuffer(FrameBufferObject *frameBufferObject) {
-//    FBO = frameBufferObject;
-//}
-
 void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
     const Window* window = Renderer::GetWindow();
     int w = window->width, h = window->height;
@@ -63,6 +59,42 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
             projection = glm::ortho( -w/2.f, w/2.f, -h/2.f, h/2.f, 1.f, -1.f);
             break;
     }
+
+    this->projectionMode = projectionMode;
+
+}
+
+void TE::Camera::Unbind() {
+    if (FBO != nullptr)
+        FBO->Unbind();
+}
+
+void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode, int width, int height) {
+    for(int i = width * height; i > 1; i--)
+        if((width % i) == 0 && (height % i) == 0)
+        {
+            width = width / i;
+            height = height / i;
+        }
+
+    float aspectRatio = (float) width/height;
+
+    switch (projectionMode)
+    {
+        case ProjectionMode::Perspective:
+            projection = glm::perspective(-75.f, aspectRatio, 1.f, -1.f);
+            break;
+        case ProjectionMode::Ortho:
+            projection = glm::ortho( -width/2.f, width/2.f, -height/2.f, height/2.f, 1.f, -1.f);
+            break;
+    }
+
+    this->projectionMode = projectionMode;
+}
+
+void TE::Camera::SetFrameBuffer(TE::FrameBufferObject *frameBufferObject) {
+    FBO = frameBufferObject;
+    SetProjectionMode(this->projectionMode, 1, 1);
 }
 
 void TE::Camera::CameraTransform::Rotate(TE::Vec3 rotation) {

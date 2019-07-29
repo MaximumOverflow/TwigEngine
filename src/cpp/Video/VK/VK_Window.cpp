@@ -22,7 +22,6 @@ VK_Window::VK_Window(unsigned int width, unsigned int height, std::string title)
     vkApplicationInfo.apiVersion = VK_API_VERSION_1_0;
     vkApplicationInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
     vkApplicationInfo.pEngineName = "Twig Engine";
-    vkApplicationInfo.engineVersion = VK_MAKE_VERSION(0,1,0);
     vkApplicationInfo.pApplicationName = title.c_str();
     vkApplicationInfo.applicationVersion = VK_MAKE_VERSION(1,0,0);
 

@@ -42,6 +42,8 @@ void Application::Execute() {
         }
         LayerStack::UpdateAll();
 
+        Renderer::DrawQueue();
+
         Renderer::SwapBuffers();
         auto end = std::chrono::high_resolution_clock::now();
 

@@ -17,6 +17,7 @@ namespace TE {
         Transform* transform = AddModule<CameraTransform>();
         glm::mat4 projection;
         FrameBufferObject* FBO = nullptr;
+        ProjectionMode projectionMode;
 
         class CameraTransform : public Transform
         {
@@ -37,12 +38,16 @@ namespace TE {
         Camera(TE::ProjectionMode projectionMode);
         ~Camera();
         void Bind();
+        void Unbind();
         const glm::mat4& GetProjectionMatrix() const;
         const glm::mat4& GetTransformMatrix() const;
         void SetProjectionMode(ProjectionMode projectionMode);
+        void SetProjectionMode(ProjectionMode projectionMode, int width, int height);
         double drawDistance = 500;
 
-//        void SetFrameBuffer(FrameBufferObject* frameBufferObject) {FBO = frameBufferObject;};
+        void SetFrameBuffer(FrameBufferObject* frameBufferObject);
+        bool HasFrameBufer() { return FBO != nullptr; }
+
     };
 
 }

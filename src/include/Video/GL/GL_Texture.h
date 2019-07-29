@@ -15,11 +15,14 @@ namespace TE {
         int width, height, bpp;
         unsigned char* buffer;
     public:
+        GL_Texture();
+        GL_Texture(const unsigned char* buffer, int width, int height, int bpp);
         explicit GL_Texture(std::string path);
         ~GL_Texture() override;
 
         void Bind(unsigned int slot = 0) override;
         void Unbind() override;
+        const unsigned int GetID() const;
         inline unsigned int GetSlot() { return slot; }
     };
 }

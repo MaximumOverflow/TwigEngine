@@ -5,17 +5,23 @@
 #ifndef TWIG_ENGINE_FRAMEBUFFEROBJECT_H
 #define TWIG_ENGINE_FRAMEBUFFEROBJECT_H
 
+#include <Types/Types.h>
+#include "Video/Texture.h"
+
 namespace TE {
     class FrameBufferObject {
     protected:
-        float width = 0, height = 0;
+        int width = 0, height = 0;
     public:
-        static FrameBufferObject* Create(float width = 0, float height = 0);
+        static FrameBufferObject* Create(int width = 0, int height = 0);
         virtual ~FrameBufferObject() = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
-        virtual void SetResolution(float width, float height) = 0;
+        virtual void SetResolution(int width, int height) = 0;
+        virtual Vec2 GetResolution() = 0;
+
+        virtual Texture* GetRenderTexture() = 0;
     };
 }
 

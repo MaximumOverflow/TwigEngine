@@ -15,6 +15,7 @@ namespace TE {
         virtual void Bind(unsigned int slot = 0) = 0;
         virtual void Unbind() = 0;
         static Texture* Create(const std::string path);
+        static Texture* Create(const unsigned char* buffer, int width, int height, int bpp);
     };
 }
 

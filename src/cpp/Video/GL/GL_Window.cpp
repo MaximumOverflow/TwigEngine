@@ -8,6 +8,7 @@
 #include "Video/GL/GL_Window.h"
 #include "Debug.h"
 #include "Global.h"
+#include "Video/Renderer.h"
 
 #include "Events/Event.h"
 #include "Events/EventHandler.h"
@@ -137,6 +138,7 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
 
 
 
@@ -221,6 +223,8 @@ void GL_Window::HandleAndTranslateEvents(GLFWwindow *window, int width, int heig
     EventHandler::DispatchEvent(new WindowResizedEvent(width, height));
     glViewport(0,0, width, height);
     glScissor(0,0,width,height);
+    Renderer::window->width = static_cast<unsigned int>(width);
+    Renderer::window->height = static_cast<unsigned int>(height);
 }
 
 void GL_Window::TranslateEvents(GLFWwindow *window, int minimized) {

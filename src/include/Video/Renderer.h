@@ -18,14 +18,17 @@
 
 namespace TE {
     class Renderer {
+        friend class GL_Window;
     private:
         static Window* window;
         static Window* CreateWindow(unsigned int width, unsigned int height, std::string title);
 
         static std::vector<Camera*> cameras;
         static std::vector<Light*> lights;
+        static std::vector<GameObject*> renderQueue;
 
         static Shader* defaultShader;
+        static Texture* defaultTexture;
         static std::string defaultVertex, defaultFragment;
         static void CompileDefaultShader();
     public:
@@ -47,6 +50,7 @@ namespace TE {
 
         static void Draw(VertexArrayObject* VAO);
         static void Draw(GameObject* gameObject);
+        static void DrawQueue();
         static void Clear();
         static void SwapBuffers();
         static void SetSwapInterval(short interval);

@@ -11,14 +11,13 @@ using namespace TE;
     #include "Video/GL/GL_FrameBufferObject.h"
 #endif
 
-FrameBufferObject* FrameBufferObject::Create(float width, float height) {
+FrameBufferObject* FrameBufferObject::Create(int width, int height) {
     FrameBufferObject* FBO;
     switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
-            FBO = new GL_FrameBufferObject();
-            FBO->SetResolution(width, height);
+            FBO = new GL_FrameBufferObject(width, height);
             return FBO;
 #endif
 

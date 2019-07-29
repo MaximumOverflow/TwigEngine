@@ -32,10 +32,12 @@ bool Renderer::wireframe;
 
 std::vector<Camera*> Renderer::cameras;
 std::vector<Light*> Renderer::lights;
+std::vector<GameObject*> Renderer::renderQueue;
 
 Shader* Renderer::defaultShader = nullptr;
 std::string Renderer::defaultVertex;
 std::string Renderer::defaultFragment;
+Texture* Renderer::defaultTexture;
 
 int Renderer::Init(GraphicsAPI API) {
     Debug::Log("Initializing renderer...");
@@ -66,6 +68,15 @@ int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std
     Init(API);
     CreateWindow(width, height, std::move(title));
     CompileDefaultShader();
+
+    const unsigned char* texBuffer = new unsigned char[4*4] {
+            255, 255, 255, 255,
+            255, 255, 255, 255,
+            255, 255, 255, 255,
+            255, 255, 255, 255,
+    };
+    defaultTexture = Texture::Create(texBuffer, 2,2,4);
+    delete[] texBuffer;
     return 0;
 }
 
@@ -122,92 +133,7 @@ void Renderer::Draw(VertexArrayObject* VAO) {
 }
 
 void Renderer::Draw(GameObject *gameObject) {
-
-    MeshRenderer* meshRenderer = gameObject->GetModule<MeshRenderer>();
-    VertexArrayObject* vao = meshRenderer->GetMeshVAO();
-    Shader* shader = meshRenderer->GetShader();
-    Texture* texture = meshRenderer->GetTexture();
-    Transform* transform = gameObject->GetModule<Transform>();
-    vao->Bind();
-
-
-    for (auto& camera : cameras)
-    {
-        if (!camera->enabled) return;
-            camera->Bind();
-
-        Transform* view = camera->GetModule<Transform>();
-
-        if (glm::distance(transform->GetPosition(), view->GetPosition()) > (meshRenderer->customDrawDistance != 0 ? meshRenderer->customDrawDistance : camera->drawDistance))
-            continue;
-
-        if (shader != nullptr)
-        {
-            shader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
-            shader->SetUniformMat4f("te_view", view->GetTransformMatrix());
-            if (transform != nullptr)
-                shader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
-            else
-                shader->SetUniformMat4f("te_model", Mat4());
-
-            if (texture != nullptr)
-            {
-                texture->Bind();
-#ifndef TE_PLATFORM_MACOS
-                if (activeAPI == GraphicsAPI::OpenGL)
-                    shader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
-#endif
-            }
-        }
-        else
-        {
-            defaultShader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
-            defaultShader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
-            if (transform != nullptr)
-                defaultShader->SetUniformMat4f("te_model", transform->GetTransformMatrix());
-            else
-                defaultShader->SetUniformMat4f("te_model", Mat4());
-
-            if (texture != nullptr)
-            {
-                texture->Bind();
-#ifndef TE_PLATFORM_MACOS
-                if (activeAPI == GraphicsAPI::OpenGL)
-                    defaultShader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
-#endif
-            }
-        }
-
-        unsigned short i = 0;
-
-        for (auto& light : lights)
-        {
-            auto* lightTransform = light->GetModule<Transform>();
-
-            auto lightPos = lightTransform->GetPosition();
-            if (glm::distance(transform != nullptr? transform->GetPosition() : Vec3(0,0,0), lightPos) < light->drawDistance)
-            {
-                if (shader != nullptr)
-                {
-                    shader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
-                    shader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
-                }
-                else
-                {
-                    defaultShader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
-                    defaultShader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
-                }
-                i++;
-            }
-        }
-
-#ifndef TE_PLATFORM_MACOS
-        if (activeAPI == GraphicsAPI::OpenGL)
-        {
-            glDrawElements(wireframe ? GL_LINES : GL_TRIANGLES, vao->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
-        }
-#endif
-    }
+    renderQueue.push_back(gameObject);
 }
 
 
@@ -235,8 +161,8 @@ const Window *Renderer::GetWindow() {
 
 void Renderer::Clear() {
 #ifndef TE_PLATFORM_MACOS
-    if (activeAPI == GraphicsAPI::OpenGL)
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (activeAPI == GraphicsAPI::OpenGL)
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
 }
 
@@ -290,8 +216,8 @@ void Renderer::CompileDefaultShader() {
             "{\n"
             "   vec4 pos = (te_projection * te_view * te_model) * vec4(te_position, 1.0);\n"
             "   gl_Position = pos;\n"
-            "   te_frag_position = (te_model * vec4(te_position, 1.0)).xyz;\n"
-            "   te_frag_normal = te_normal;\n"
+            "   te_frag_position = vec3(te_model * vec4(te_position, 1.0));\n"
+            "   te_frag_normal = vec3(transpose(inverse(mat3(te_model))) * te_normal);\n"
             "   te_frag_texture_position = te_texture_position;\n"
             "}"
     };
@@ -315,14 +241,13 @@ void Renderer::CompileDefaultShader() {
             "{\n"
             "   for (int i = 0; i < " + std::to_string(Global::maxSimultaneousLights) + "; i++)\n"
             "   {\n"
-            "       float distance = abs(distance(te_light_position[i], te_frag_position)) / te_light_color[i].w;"
+            "       float distance = abs(distance(te_light_position[i], te_frag_position));"
             "       "
             "       vec3 lightDir = normalize(te_light_position[i] - te_frag_position);\n"
-            "       light += (te_light_color[i] * max(dot(normal, lightDir),0.1f)) / distance ;\n"
+            "       light += (te_light_color[i] * dot(normal, lightDir) * te_light_color[i].w) / distance ;\n"
             "   }\n"
             "   vec4 textureColor = texture(te_texture_slot, te_frag_texture_position);\n"
-            "   color = textureColor * light;\n"
-//            "   color = textureColor;\n"
+            "   color = vec4((textureColor * light).xyz, 1.0);\n"
             "}"
     };
     delete defaultShader;
@@ -343,4 +268,115 @@ void Renderer::RemoveLight(Light *light) {
 void Renderer::SetMaximumSimultaneousLights(unsigned int lightCount) {
     Global::maxSimultaneousLights = lightCount;
     CompileDefaultShader();
+}
+
+void Renderer::DrawQueue() {
+    for (auto& camera : cameras)
+    {
+        if (!camera->enabled)
+            return;
+
+        camera->Bind();
+
+        Clear();
+        auto* cameraTransform = camera->GetModule<Transform>();
+
+        for (auto& gameObject : renderQueue)
+        {
+            auto* gameObjectTransform = gameObject->GetModule<Transform>();
+            auto* meshRenderer = gameObject->GetModule<MeshRenderer>();
+            VertexArrayObject* vao = meshRenderer->GetMeshVAO();
+            Shader* shader = meshRenderer->GetShader();
+            Texture* texture = meshRenderer->GetTexture();
+            vao->Bind();
+
+            if (glm::distance(gameObjectTransform->GetPosition(), cameraTransform->GetPosition()) > (meshRenderer->customDrawDistance != 0 ? meshRenderer->customDrawDistance : camera->drawDistance))
+                continue;
+
+            if (shader != nullptr)
+            {
+                shader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
+                shader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
+                shader->SetUniformMat4f("te_model", gameObjectTransform->GetTransformMatrix());
+
+                if (texture != nullptr)
+                {
+                    texture->Bind();
+                    #ifndef TE_PLATFORM_MACOS
+                    if (activeAPI == GraphicsAPI::OpenGL)
+                        shader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
+                    #endif
+                }
+                else
+                {
+                    defaultTexture->Bind();
+                    #ifndef TE_PLATFORM_MACOS
+                    if (activeAPI == GraphicsAPI::OpenGL)
+                        shader->SetUniformVec1i("te_texture_slot", 0);
+                    #endif
+                }
+            }
+            else
+            {
+                defaultShader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
+                defaultShader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
+                defaultShader->SetUniformMat4f("te_model", gameObjectTransform->GetTransformMatrix());
+
+                if (texture != nullptr)
+                {
+                    texture->Bind();
+                    #ifndef TE_PLATFORM_MACOS
+                    if (activeAPI == GraphicsAPI::OpenGL)
+                        defaultShader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
+                    #endif
+                }
+                else
+                {
+                    defaultTexture->Bind();
+                    #ifndef TE_PLATFORM_MACOS
+                    if (activeAPI == GraphicsAPI::OpenGL)
+                        defaultShader->SetUniformVec1i("te_texture_slot", 0);
+                    #endif
+                }
+            }
+
+            unsigned int i = 0;
+
+            for (auto& light : lights)
+            {
+                if (i > Global::maxSimultaneousLights) break;
+
+                auto* lightTransform = light->GetModule<Transform>();
+
+                auto lightPos = lightTransform->GetPosition();
+                if (glm::distance(gameObjectTransform != nullptr? gameObjectTransform->GetPosition() : Vec3(0,0,0), lightPos) < light->drawDistance)
+                {
+                    if (shader != nullptr)
+                    {
+                        shader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
+                        shader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
+                    }
+                    else
+                    {
+                        defaultShader->SetUniformVec3f("te_light_position[" + std::to_string(i) + "]", lightPos);
+                        defaultShader->SetUniformVec4f("te_light_color[" + std::to_string(i) + "]", light->color);
+                    }
+                    i++;
+                }
+            }
+
+
+            #ifndef TE_PLATFORM_MACOS
+            if (activeAPI == GraphicsAPI::OpenGL)
+            {
+                glDrawElements(wireframe ? GL_LINES : GL_TRIANGLES, vao->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
+            }
+            #endif
+
+        }
+
+        camera->Unbind();
+    }
+
+    renderQueue.clear();
 }

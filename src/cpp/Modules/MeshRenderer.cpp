@@ -14,11 +14,7 @@ void MeshRenderer::SetMesh(Mesh *mesh) {
 void MeshRenderer::Update() {
     if (mesh != nullptr)
     {
-        if (shader != nullptr)
-            shader->Bind();
         Renderer::Draw(GetParent());
-        if (shader != nullptr)
-            shader->Unbind();
     }
 }
 
