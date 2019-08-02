@@ -13,6 +13,8 @@
 #include "VertexArrayObject.h"
 #include "IndexBufferObject.h"
 #include "Shader.h"
+#include "Objects/Mesh.h"
+#include "Modules/MeshRenderer.h"
 #include "Objects/GameObjects/Camera.h"
 #include "Objects/GameObjects/Light.h"
 
@@ -26,6 +28,8 @@ namespace TE {
         static std::vector<Camera*> cameras;
         static std::vector<Light*> lights;
         static std::vector<GameObject*> renderQueue;
+
+        static std::unordered_map<Mesh*, std::vector<MeshRenderer*>> renderQueue3D;
 
         static Shader* defaultShader;
         static Texture* defaultTexture;
@@ -50,7 +54,9 @@ namespace TE {
 
         static void Draw(VertexArrayObject* VAO);
         static void Draw(GameObject* gameObject);
+        static void Draw(Mesh* mesh, MeshRenderer* meshRenderer);
         static void DrawQueue();
+        static void DrawQueueInstanced();
         static void Clear();
         static void SwapBuffers();
         static void SetSwapInterval(short interval);

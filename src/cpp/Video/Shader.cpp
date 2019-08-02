@@ -84,5 +84,6 @@ int TE::Shader::GetUniformFromCache(std::string name) {
 }
 
 void TE::Shader::AddUniformToCache(std::string name, int id) {
-    uniformCache[name] = id;
+    Debug::Log("Adding \"" + name + "\" to uniform cache...");
+    uniformCache.emplace(std::make_pair(name, id));
 }

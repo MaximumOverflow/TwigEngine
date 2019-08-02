@@ -17,6 +17,7 @@ namespace TE {
     private:
         VertexArrayObject* VAO;
         VertexBufferObject* VBO;
+        VertexBufferObject* instanceVBO;
         IndexBufferObject* IBO;
 
         void LoadOBJ(std::string meshPath);
@@ -32,7 +33,8 @@ namespace TE {
         Mesh(std::string meshPath, TE::FileType fileType);
         Mesh();
         void LoadModel(std::string meshPath, TE::FileType fileType);
-        TE::VertexArrayObject* GetVAO();
+        VertexArrayObject* GetVAO();
+        VertexBufferObject* GetInstanceVBO();
         ~Mesh();
 
     };

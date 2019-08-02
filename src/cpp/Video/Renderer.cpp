@@ -32,7 +32,9 @@ bool Renderer::wireframe;
 
 std::vector<Camera*> Renderer::cameras;
 std::vector<Light*> Renderer::lights;
+
 std::vector<GameObject*> Renderer::renderQueue;
+std::unordered_map<Mesh*, std::vector<MeshRenderer*>> Renderer::renderQueue3D;
 
 Shader* Renderer::defaultShader = nullptr;
 std::string Renderer::defaultVertex;
@@ -379,4 +381,27 @@ void Renderer::DrawQueue() {
     }
 
     renderQueue.clear();
+}
+
+void Renderer::Draw(Mesh* mesh, MeshRenderer* meshRenderer) {
+    //Todo Implement instanced rendering
+    auto queueEntry = renderQueue3D.find(mesh);
+    if (queueEntry == renderQueue3D.end())
+    {
+        renderQueue3D[mesh] = std::vector<MeshRenderer*>();
+        std::vector<MeshRenderer*>& meshRendererVector = renderQueue3D[mesh];
+        meshRendererVector.push_back(meshRenderer);
+    }
+    else {
+        std::vector<MeshRenderer*>& meshRendererVector = renderQueue3D[mesh];
+        meshRendererVector.push_back(meshRenderer);
+    }
+}
+
+void Renderer::DrawQueueInstanced() {
+    for (auto& pair : renderQueue3D)
+    {
+        Mesh* mesh = pair.first;
+        mesh->GetVAO()->Bind();
+    }
 }

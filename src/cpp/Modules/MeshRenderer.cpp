@@ -37,3 +37,13 @@ Texture *MeshRenderer::GetTexture() const {
 void MeshRenderer::SetTexture(Texture *texture) {
     this->texture = texture;
 }
+
+Transform *MeshRenderer::GetParentTransform() const {
+    return parentTransform;
+}
+
+MeshRenderer::MeshRenderer(GameObject *parent) : Module(parent) {
+    parentTransform = parent->GetModule<Transform>();
+    if (parentTransform == nullptr)
+        parentTransform = parent->AddModule<Transform>();
+}

@@ -26,18 +26,26 @@ Mesh::~Mesh() {
 Mesh::Mesh() {
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
+    instanceVBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
 
     VAO->LinkVertexBufferObject(VBO);
+    VAO->LinkVertexBufferObject(instanceVBO);
     VAO->LinkIndexBufferObject(IBO);
+
+    instanceVBO->SetLayout(VertexBufferLayout{
+            {}
+    });
 }
 
 Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
+    instanceVBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
 
     VAO->LinkVertexBufferObject(VBO);
+    VAO->LinkVertexBufferObject(instanceVBO);
     VAO->LinkIndexBufferObject(IBO);
 
     LoadModel(meshPath, fileType);
@@ -126,5 +134,9 @@ void Mesh::ClearSingleBuffers() {
         normals.clear();
         texCoords.clear();
     }
+}
+
+VertexBufferObject *Mesh::GetInstanceVBO() {
+    return instanceVBO;
 }
 

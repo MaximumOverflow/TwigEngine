@@ -9,6 +9,7 @@
 #include "Objects/Mesh.h"
 #include "Video/Shader.h"
 #include "Module.h"
+#include "Transform.h"
 
 namespace TE {
     class MeshRenderer : public Module {
@@ -16,10 +17,11 @@ namespace TE {
         Mesh* mesh = nullptr;
         Shader* shader = nullptr;
         Texture* texture = nullptr;
+        Transform* parentTransform;
     public:
         double customDrawDistance = 0;
 
-        MeshRenderer(GameObject* parent) : Module(parent) {};
+        explicit MeshRenderer(GameObject* parent);
         void SetMesh(Mesh* mesh);
 
         void SetShader(Shader *shader);
@@ -29,6 +31,7 @@ namespace TE {
         Texture* GetTexture() const;
 
         VertexArrayObject* GetMeshVAO();
+        Transform* GetParentTransform() const;
 
         void Update() override;
     };

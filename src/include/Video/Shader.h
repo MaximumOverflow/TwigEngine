@@ -9,12 +9,13 @@
 #include <unordered_map>
 
 #include "Types/Types.h"
+#include "External/robin_hood.h"
 
 
 namespace TE {
     class Shader {
     protected:
-        std::unordered_map<std::string, int> uniformCache;
+        robin_hood::unordered_map<std::string, int> uniformCache;
         int GetUniformFromCache(std::string name);
         void AddUniformToCache(std::string name, int id);
     public:
