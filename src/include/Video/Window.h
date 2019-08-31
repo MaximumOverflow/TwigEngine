@@ -14,7 +14,7 @@ namespace TE {
         unsigned int width, height;
         std::string title;
 
-        virtual ~Window() {};
+        virtual ~Window() = default;
         virtual bool IsOpen() = 0;
     };
 }

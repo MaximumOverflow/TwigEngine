@@ -5,8 +5,10 @@
 #ifndef TWIG_ENGINE_FRAMEBUFFEROBJECT_H
 #define TWIG_ENGINE_FRAMEBUFFEROBJECT_H
 
-#include <Types/Types.h>
+#include "Types/Types.h"
 #include "Video/Texture.h"
+
+#include <memory>
 
 namespace TE {
     class FrameBufferObject {
@@ -21,7 +23,7 @@ namespace TE {
         virtual void SetResolution(int width, int height) = 0;
         virtual Vec2 GetResolution() = 0;
 
-        virtual Texture* GetRenderTexture() = 0;
+        virtual std::shared_ptr<Texture> GetRenderTexture() = 0;
     };
 }
 

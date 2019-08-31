@@ -5,10 +5,24 @@
 #ifndef TWIG_ENGINE_MACROS_H
 #define TWIG_ENGINE_MACROS_H
 
-#define TE_pVertexArrayObject std::shared_ptr<TE::VertexArrayObject>
-#define TE_pVertexBufferObject std::shared_ptr<TE::VertexBufferObject>
-#define TE_pIndexBufferObject std::shared_ptr<TE::IndexBufferObject>
-#define TE_pShader std::shared_ptr<Shader>
+#include "Video/FrameBufferObject.h"
+#include "Video/VertexArrayObject.h"
+#include "Video/VertexBufferObject.h"
+#include "Video/IndexBufferObject.h"
+#include "Video/Shader.h"
+#include "Video/Texture.h"
+#include "Objects/Mesh.h"
+
+namespace TE {
+    typedef std::shared_ptr<VertexArrayObject> pVertexArrayObject;
+    typedef std::shared_ptr<VertexBufferObject> pVertexBufferObject;
+    typedef std::shared_ptr<IndexBufferObject> pIndexBufferObject;
+    typedef std::shared_ptr<FrameBufferObject> pFrameBufferObject;
+
+    typedef std::shared_ptr<Shader> pShader;
+    typedef std::shared_ptr<Mesh> pMesh;
+    typedef std::shared_ptr<Texture> pTexture;
+}
 
 #define TE_BIND_CALLBACK(f) std::bind(&f, this, std::placeholders::_1)
 

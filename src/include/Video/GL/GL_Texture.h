@@ -11,19 +11,16 @@
 namespace TE {
     class GL_Texture : public Texture {
     private:
-        unsigned int ID, slot;
-        int width, height, bpp;
-        unsigned char* buffer;
+        unsigned int ID;
     public:
         GL_Texture();
         GL_Texture(const unsigned char* buffer, int width, int height, int bpp);
-        explicit GL_Texture(std::string path);
+        explicit GL_Texture(std::string path, bool retainBuffer = false);
         ~GL_Texture() override;
 
         void Bind(unsigned int slot = 0) override;
         void Unbind() override;
         const unsigned int GetID() const;
-        inline unsigned int GetSlot() { return slot; }
     };
 }
 

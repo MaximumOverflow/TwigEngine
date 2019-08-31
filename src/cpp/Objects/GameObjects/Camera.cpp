@@ -38,7 +38,7 @@ const glm::mat4 &TE::Camera::GetTransformMatrix() const {
 }
 
 void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
-    const Window* window = Renderer::GetWindow();
+    auto window = Renderer::GetActiveWindow();
     int w = window->width, h = window->height;
 
     for(int i = w * h; i > 1; i--)

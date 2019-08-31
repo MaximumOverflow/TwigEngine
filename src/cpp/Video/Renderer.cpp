@@ -8,13 +8,8 @@
 #include "Modules/MeshRenderer.h"
 
 #ifndef TE_PLATFORM_MACOS
-    #include "Video/GL/GL_Window.h"
-    #include "Video/VK/VK_Window.h"
-    #include "Video/GL/GL_VertexArrayObject.h"
-    #include "Video/GL/GL_VertexBufferObject.h"
-    #include "Video/GL/GL_IndexBufferObject.h"
-    #include "Video/GL/GL_Shader.h"
-    #include "Video/GL/GL_Texture.h"
+    #include "Video/GL/API_OpenGL.h"
+    #include "Video/VK/API_Vulkan.h"
 #endif
 
 #include <exception>
@@ -26,8 +21,8 @@
 
 
 using namespace TE;
-#define activeAPI Global::activeAPI
-Window* Renderer::window;
+std::unique_ptr<RenderingAPI> Renderer::activeAPI;
+
 bool Renderer::wireframe;
 
 std::vector<Camera*> Renderer::cameras;
@@ -36,28 +31,24 @@ std::vector<Light*> Renderer::lights;
 std::vector<GameObject*> Renderer::renderQueue;
 std::unordered_map<Mesh*, std::vector<MeshRenderer*>> Renderer::renderQueue3D;
 
-Shader* Renderer::defaultShader = nullptr;
+std::shared_ptr<Shader> Renderer::defaultShader = nullptr;
 std::string Renderer::defaultVertex;
 std::string Renderer::defaultFragment;
-Texture* Renderer::defaultTexture;
+std::shared_ptr<Texture> Renderer::defaultTexture;
 
 int Renderer::Init(GraphicsAPI API) {
     Debug::Log("Initializing renderer...");
     Global::activeAPI = API;
-    switch (activeAPI)
+    switch (API)
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
-            Debug::Log("Initializing GLFW...");
-            if (!glfwInit())
-                return -1;
+            activeAPI = std::make_unique<API_OpenGL>();
             break;
 
         case GraphicsAPI::Vulkan:
             Debug::Log("Vulkan support is still under development. Some features might be missing or misbehave.", Debug::Severity::Warning);
-            Debug::Log("Initializing GLFW...");
-            if (!glfwInit())
-                return -1;
+            activeAPI = std::make_unique<API_Vulkan>();
             break;
 #endif
         default:
@@ -82,56 +73,8 @@ int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std
     return 0;
 }
 
-Window* Renderer::CreateWindow(unsigned int width, unsigned int height, std::string title) {
-    switch (activeAPI)
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating new OpenGL window...");
-            window = new GL_Window(width, height, title);
-            glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
-            return window;
-
-        case GraphicsAPI::Vulkan:
-            Debug::Log("Creating new Vulkan window...");
-            window = new VK_Window(width, height, title);
-            return window;
-#endif
-
-#ifdef TE_PLATFORM_WINDOWS
-
-#endif
-
-#ifdef TE_PLATFORM_MACOS
-
-#endif
-
-        default:
-            return nullptr;
-    }
-}
-
-void Renderer::Draw(VertexArrayObject* VAO) {
-    for (auto& camera : cameras)
-    {
-        if (!camera->enabled) return;
-            camera->Bind();
-
-            BindDefaultShader();
-
-#ifndef TE_PLATFORM_MACOS
-        if (activeAPI == GraphicsAPI::OpenGL)
-        {
-            VAO->Bind();
-
-            defaultShader->SetUniformMat4f("te_projection", camera->GetProjectionMatrix());
-            defaultShader->SetUniformMat4f("te_view", camera->GetTransformMatrix());
-            defaultShader->SetUniformMat4f("te_model", Mat4(1.f));
-
-            glDrawElements(wireframe ? GL_LINES : GL_TRIANGLES, VAO->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
-        }
-#endif
-    }
+std::shared_ptr<Window> Renderer::CreateWindow(unsigned int width, unsigned int height, std::string title) {
+    return activeAPI->CreateWindow(width, height, title);
 }
 
 void Renderer::Draw(GameObject *gameObject) {
@@ -139,42 +82,16 @@ void Renderer::Draw(GameObject *gameObject) {
 }
 
 
-bool Renderer::WindowIsOpen() {
-    return window->IsOpen();
-}
-
-GraphicsAPI Renderer::GetCurrentAPI() {
-    return activeAPI;
-}
-
-void Renderer::Terminate() {
-    delete window;
-#ifndef TE_PLATFORM_MACOS
-    if (activeAPI == GraphicsAPI::OpenGL || activeAPI == GraphicsAPI::Vulkan)
-    {
-        glfwTerminate();
-    }
-#endif
-}
-
-const Window *Renderer::GetWindow() {
-    return window;
+bool Renderer::HasOpenWindows() {
+    return activeAPI->GetWindowCount() > 0;
 }
 
 void Renderer::Clear() {
-#ifndef TE_PLATFORM_MACOS
-        if (activeAPI == GraphicsAPI::OpenGL)
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-#endif
+    activeAPI->Clear();
 }
 
 void Renderer::SwapBuffers() {
-#ifndef TE_PLATFORM_MACOS
-    if (Global::activeAPI == GraphicsAPI::OpenGL) {
-        GL_Window *gl_window = static_cast<GL_Window *>(window);
-        gl_window->SwapBuffers();
-    }
-#endif
+    activeAPI->SwapBuffers();
 }
 
 void Renderer::AddCamera(Camera *camera) {
@@ -219,7 +136,8 @@ void Renderer::CompileDefaultShader() {
             "   vec4 pos = (te_projection * te_view * te_model) * vec4(te_position, 1.0);\n"
             "   gl_Position = pos;\n"
             "   te_frag_position = vec3(te_model * vec4(te_position, 1.0));\n"
-            "   te_frag_normal = vec3(transpose(inverse(mat3(te_model))) * te_normal);\n"
+//            "   te_frag_normal = vec3(transpose(inverse(mat3(te_model))) * te_normal);\n"
+            "   te_frag_normal = vec3(mat3(te_model) * te_normal);\n"
             "   te_frag_texture_position = te_texture_position;\n"
             "}"
     };
@@ -249,10 +167,9 @@ void Renderer::CompileDefaultShader() {
             "       light += (te_light_color[i] * dot(normal, lightDir) * te_light_color[i].w) / distance ;\n"
             "   }\n"
             "   vec4 textureColor = texture(te_texture_slot, te_frag_texture_position);\n"
-            "   color = vec4((textureColor * light).xyz, 1.0);\n"
+            "   color = max(vec4((textureColor * light).xyz, 1.0), 0.1);\n"
             "}"
     };
-    delete defaultShader;
     defaultShader = Shader::Create(defaultVertex, defaultFragment);
 }
 
@@ -288,8 +205,15 @@ void Renderer::DrawQueue() {
             auto* gameObjectTransform = gameObject->GetModule<Transform>();
             auto* meshRenderer = gameObject->GetModule<MeshRenderer>();
             VertexArrayObject* vao = meshRenderer->GetMeshVAO();
-            Shader* shader = meshRenderer->GetShader();
-            Texture* texture = meshRenderer->GetTexture();
+            pShader shader = meshRenderer->GetShader();
+            pTexture texture = meshRenderer->GetTexture();
+
+            if (!vao)
+            {
+                Debug::Log("Gameobject \""+ gameObject->name +"\" doesn't have a valid VAO", Debug::Severity::Error);
+                continue;
+            }
+
             vao->Bind();
 
             if (glm::distance(gameObjectTransform->GetPosition(), cameraTransform->GetPosition()) > (meshRenderer->customDrawDistance != 0 ? meshRenderer->customDrawDistance : camera->drawDistance))
@@ -304,18 +228,12 @@ void Renderer::DrawQueue() {
                 if (texture != nullptr)
                 {
                     texture->Bind();
-                    #ifndef TE_PLATFORM_MACOS
-                    if (activeAPI == GraphicsAPI::OpenGL)
-                        shader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
-                    #endif
+                    shader->SetUniformVec1i("te_texture_slot", texture->GetSlot());
                 }
                 else
                 {
                     defaultTexture->Bind();
-                    #ifndef TE_PLATFORM_MACOS
-                    if (activeAPI == GraphicsAPI::OpenGL)
-                        shader->SetUniformVec1i("te_texture_slot", 0);
-                    #endif
+                    shader->SetUniformVec1i("te_texture_slot", 0);
                 }
             }
             else
@@ -327,18 +245,12 @@ void Renderer::DrawQueue() {
                 if (texture != nullptr)
                 {
                     texture->Bind();
-                    #ifndef TE_PLATFORM_MACOS
-                    if (activeAPI == GraphicsAPI::OpenGL)
-                        defaultShader->SetUniformVec1i("te_texture_slot", ((GL_Texture*) texture)->GetSlot());
-                    #endif
+                    defaultShader->SetUniformVec1i("te_texture_slot", texture->GetSlot());
                 }
                 else
                 {
                     defaultTexture->Bind();
-                    #ifndef TE_PLATFORM_MACOS
-                    if (activeAPI == GraphicsAPI::OpenGL)
-                        defaultShader->SetUniformVec1i("te_texture_slot", 0);
-                    #endif
+                    defaultShader->SetUniformVec1i("te_texture_slot", 0);
                 }
             }
 
@@ -367,14 +279,7 @@ void Renderer::DrawQueue() {
                 }
             }
 
-
-            #ifndef TE_PLATFORM_MACOS
-            if (activeAPI == GraphicsAPI::OpenGL)
-            {
-                glDrawElements(wireframe ? GL_LINES : GL_TRIANGLES, vao->GetIndexBufferObjectElementCount(), GL_UNSIGNED_INT, 0);
-            }
-            #endif
-
+            activeAPI->DrawIndexed(wireframe, vao->GetIndexBufferObjectElementCount());
         }
 
         camera->Unbind();
@@ -383,25 +288,7 @@ void Renderer::DrawQueue() {
     renderQueue.clear();
 }
 
-void Renderer::Draw(Mesh* mesh, MeshRenderer* meshRenderer) {
-    //Todo Implement instanced rendering
-    auto queueEntry = renderQueue3D.find(mesh);
-    if (queueEntry == renderQueue3D.end())
-    {
-        renderQueue3D[mesh] = std::vector<MeshRenderer*>();
-        std::vector<MeshRenderer*>& meshRendererVector = renderQueue3D[mesh];
-        meshRendererVector.push_back(meshRenderer);
-    }
-    else {
-        std::vector<MeshRenderer*>& meshRendererVector = renderQueue3D[mesh];
-        meshRendererVector.push_back(meshRenderer);
-    }
+std::shared_ptr<Window> Renderer::GetActiveWindow() {
+    return activeAPI->GetCurrentWindow();
 }
 
-void Renderer::DrawQueueInstanced() {
-    for (auto& pair : renderQueue3D)
-    {
-        Mesh* mesh = pair.first;
-        mesh->GetVAO()->Bind();
-    }
-}

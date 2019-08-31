@@ -12,7 +12,7 @@
 #endif
 
 TE::IndexBufferObject *TE::IndexBufferObject::Create() {
-    IndexBufferObject* IBO;
+    IndexBufferObject* IBO = nullptr;
     switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS

@@ -10,25 +10,27 @@
 #include "Video/Shader.h"
 #include "Module.h"
 #include "Transform.h"
+#include "TE_Macros.h"
 
 namespace TE {
     class MeshRenderer : public Module {
     private:
-        Mesh* mesh = nullptr;
-        Shader* shader = nullptr;
-        Texture* texture = nullptr;
+        pMesh mesh = nullptr;
+        pShader shader = nullptr;
+        pTexture texture = nullptr;
         Transform* parentTransform;
     public:
         double customDrawDistance = 0;
 
         explicit MeshRenderer(GameObject* parent);
-        void SetMesh(Mesh* mesh);
+        void SetMesh(pMesh mesh);
 
-        void SetShader(Shader *shader);
-        Shader* GetShader() const;
 
-        void SetTexture(Texture* texture);
-        Texture* GetTexture() const;
+        void SetShader(pShader shader);
+        pShader GetShader() const;
+
+        void SetTexture(pTexture texture);
+        pTexture GetTexture() const;
 
         VertexArrayObject* GetMeshVAO();
         Transform* GetParentTransform() const;

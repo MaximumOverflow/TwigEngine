@@ -10,6 +10,7 @@
 
 namespace TE {
     class GL_Window : public Window {
+        friend class API_OpenGL;
     private:
         GLFWwindow* window;
 

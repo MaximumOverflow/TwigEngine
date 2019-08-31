@@ -130,4 +130,8 @@
 
 #define TE_KEY_LAST               TE_KEY_MENU
 
+enum KeyState {
+    TE_RELEASED, TE_PRESSED, TE_HELD
+};
+
 #endif //TWIG_ENGINE_KEYCODES_H

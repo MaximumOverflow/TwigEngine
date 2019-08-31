@@ -21,7 +21,8 @@ namespace TE {
         IndexBufferObject* IBO;
 
         void LoadOBJ(std::string meshPath);
-        void ClearSingleBuffers();
+        void ClearPropertyBuffers();
+        bool CheckBufferValidity();
 
         std::vector<float> positions;
         std::vector<float> texCoords;
@@ -35,6 +36,9 @@ namespace TE {
         void LoadModel(std::string meshPath, TE::FileType fileType);
         VertexArrayObject* GetVAO();
         VertexBufferObject* GetInstanceVBO();
+
+        static std::shared_ptr<Mesh> Create();
+        static std::shared_ptr<Mesh> Create(std::string meshPath, TE::FileType fileType);
         ~Mesh();
 
     };

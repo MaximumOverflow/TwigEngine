@@ -11,7 +11,7 @@
 namespace TE {
     class Input {
     public:
-        static void SetMouseCursorShown(bool mode);
+        static void SetMouseCursorShown(bool active);
 
         static bool GetMouseButtonPressed(Event *event, int button);
         static bool GetMouseButtonReleased(Event *event, int button);

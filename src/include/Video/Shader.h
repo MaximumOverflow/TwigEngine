@@ -7,6 +7,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include "Types/Types.h"
 #include "External/robin_hood.h"
@@ -19,7 +20,7 @@ namespace TE {
         int GetUniformFromCache(std::string name);
         void AddUniformToCache(std::string name, int id);
     public:
-        static Shader* Create(std::string vertexSource, std::string fragmentSource);
+        static std::shared_ptr<Shader> Create(std::string vertexSource, std::string fragmentSource);
         static Shader* CreateFromFile(std::string vertexPath, std::string fragmentPath);
 
         virtual void Bind() = 0;

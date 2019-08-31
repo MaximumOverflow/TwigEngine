@@ -20,4 +20,6 @@
 #include "Types/KeyCodes.h"
 #include "Types/MouseCodes.h"
 
+#include "TE_Macros.h"
+
 #endif

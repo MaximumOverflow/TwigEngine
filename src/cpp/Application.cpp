@@ -40,9 +40,9 @@ void Application::Execute() {
             EntityManager::UpdateAllTimed();
             timedUpdateCountdown = Global::timedUpdateInterval;
         }
-        LayerStack::UpdateAll();
 
         Renderer::DrawQueue();
+        LayerStack::UpdateAll();
 
         Renderer::SwapBuffers();
         auto end = std::chrono::high_resolution_clock::now();
@@ -53,7 +53,6 @@ void Application::Execute() {
 
     //Cleanup
     LayerStack::Clear();
-    Renderer::Terminate();
 }
 
 void Application::Close(Event* event) {

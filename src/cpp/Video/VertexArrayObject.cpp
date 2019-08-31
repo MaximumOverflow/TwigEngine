@@ -11,7 +11,7 @@
 
 
 TE::VertexArrayObject *TE::VertexArrayObject::Create() {
-    VertexArrayObject* VAO;
+    VertexArrayObject* VAO = nullptr;
     switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS

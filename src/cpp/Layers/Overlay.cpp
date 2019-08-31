@@ -57,17 +57,17 @@ void Overlay::InitializeImGui() {
 #ifndef TE_PLATFORM_MACOS
     if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
     {
-        GLFWwindow* window = ((GL_Window*) Renderer::GetWindow())->GetGLFWWindowPointer();
+        GLFWwindow* window = std::static_pointer_cast<GL_Window>(Renderer::GetActiveWindow())->GetGLFWWindowPointer();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        ImGui_ImplOpenGL3_Init(nullptr);
     }
-    else /*if (Global::GetActiveAPI() == GraphicsAPI::Vulkan)*/
+    else if (Global::GetActiveAPI() == GraphicsAPI::Vulkan)
     {
         Debug::Log("Failed to initialize Overlay due to lack of implementation for the current API", Debug::Severity::Error);
-//        GLFWwindow* window = ((VK_Window*) Renderer::GetWindow())->GetGLFWWindowPointer();
-//        ImGui_ImplGlfw_InitForVulkan(window, true);
-//        ImGui_ImplVulkan_InitInfo* initInfo;
-//        ImGui_ImplVulkan_Init();
+        GLFWwindow* window = std::static_pointer_cast<VK_Window>(Renderer::GetActiveWindow())->GetGLFWWindowPointer();
+        ImGui_ImplGlfw_InitForVulkan(window, true);
+        ImGui_ImplVulkan_InitInfo* initInfo;
+//        ImGui_ImplVulkan_Init()
     }
 #endif
 

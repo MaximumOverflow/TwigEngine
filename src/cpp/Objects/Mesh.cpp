@@ -24,6 +24,7 @@ Mesh::~Mesh() {
 
 
 Mesh::Mesh() {
+    Debug::Log("Creating empty mesh...");
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
     instanceVBO = VertexBufferObject::Create();
@@ -33,16 +34,23 @@ Mesh::Mesh() {
     VAO->LinkVertexBufferObject(instanceVBO);
     VAO->LinkIndexBufferObject(IBO);
 
+    if (!CheckBufferValidity()) return;
+
     instanceVBO->SetLayout(VertexBufferLayout{
             {}
     });
+
+    Debug::Log("Mesh successfully created");
 }
 
 Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
+    Debug::Log("Creating mesh from " + meshPath + "...");
     VAO = VertexArrayObject::Create();
     VBO = VertexBufferObject::Create();
     instanceVBO = VertexBufferObject::Create();
     IBO = IndexBufferObject::Create();
+
+    if (!CheckBufferValidity()) return;
 
     VAO->LinkVertexBufferObject(VBO);
     VAO->LinkVertexBufferObject(instanceVBO);
@@ -50,7 +58,7 @@ Mesh::Mesh(std::string meshPath, TE::FileType fileType) {
 
     LoadModel(meshPath, fileType);
 
-    ClearSingleBuffers();
+    ClearPropertyBuffers();
     Debug::Log("Generated mesh containing " + std::to_string(positions.size()) + " verteces, with a " + std::to_string(buffer.size() * sizeof(float) / 1000000.f) + " MB buffer, from file: " + meshPath);
 }
 
@@ -66,7 +74,7 @@ void Mesh::LoadModel(std::string meshPath, TE::FileType fileType) {
             return;
     }
 
-    if (buffer.size() == 0) return;
+    if (buffer.empty()) return;
 
     VBO->SetData(buffer.size(), buffer.data());
 
@@ -127,7 +135,7 @@ TE::VertexArrayObject *Mesh::GetVAO() {
     return VAO;
 }
 
-void Mesh::ClearSingleBuffers() {
+void Mesh::ClearPropertyBuffers() {
     if (!Global::GetDebugState())
     {
         positions.clear();
@@ -138,5 +146,23 @@ void Mesh::ClearSingleBuffers() {
 
 VertexBufferObject *Mesh::GetInstanceVBO() {
     return instanceVBO;
+}
+
+std::shared_ptr<Mesh> Mesh::Create() {
+    return std::make_shared<Mesh>();
+}
+
+std::shared_ptr<Mesh> Mesh::Create(std::string meshPath, TE::FileType fileType) {
+    return std::make_shared<Mesh>(meshPath, fileType);
+}
+
+bool Mesh::CheckBufferValidity() {
+    if (!VAO || !VBO || !IBO)
+    {
+        Debug::Log("Invalid mesh buffers", Debug::Severity::Error);
+        return false;
+    }
+
+    return true;
 }
 

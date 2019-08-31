@@ -6,6 +6,7 @@
 #define TWIG_ENGINE_GLOBAL_H
 
 #include "Types/Types.h"
+#include "Video/RenderingAPI.h"
 
 namespace TE {
     class Global {
@@ -16,11 +17,10 @@ namespace TE {
         static bool debug;
         static GraphicsAPI activeAPI;
         static float timedUpdateInterval;
-
         static unsigned int maxSimultaneousLights;
     public:
         static bool GetDebugState();
-        static const GraphicsAPI& GetActiveAPI();
+        static GraphicsAPI GetActiveAPI();
     };
 }
 

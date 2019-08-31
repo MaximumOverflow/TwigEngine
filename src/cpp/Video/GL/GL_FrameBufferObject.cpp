@@ -14,21 +14,21 @@ void GL_FrameBufferObject::Bind() {
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
     glViewport(0,0, width, height);
-    renderTexture.Bind();
+    renderTexture->Bind();
 }
 
 void GL_FrameBufferObject::Unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0,0, Renderer::GetWindow()->width, Renderer::GetWindow()->height);
-    renderTexture.Unbind();
+    glViewport(0,0, Renderer::GetActiveWindow()->width, Renderer::GetActiveWindow()->height);
+    renderTexture->Unbind();
 }
 
 GL_FrameBufferObject::GL_FrameBufferObject(int width, int height) {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
-    renderTexture.Bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture.GetID(), 0);
+    renderTexture->Bind();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture->GetID(), 0);
 
     glGenRenderbuffers(1, &renderBufferID);
     glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
@@ -53,8 +53,8 @@ void GL_FrameBufferObject::SetResolution(int width, int height) {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 }
 
-Texture* GL_FrameBufferObject::GetRenderTexture() {
-    return &renderTexture;
+std::shared_ptr<Texture> GL_FrameBufferObject::GetRenderTexture() {
+    return renderTexture;
 }
 
 Vec2 GL_FrameBufferObject::GetResolution() {

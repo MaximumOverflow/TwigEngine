@@ -7,7 +7,7 @@
 
 #include "Objects/GameObjects/Light.h"
 
-TE::Light::Light(Vec3 position, Vec4 color) : color(color) {
+TE::Light::Light(Vec3 position, Vec4 color, LightType type) : color(color), type{type}{
     transform->SetPosition(position);
     Renderer::AddLight(this);
 }

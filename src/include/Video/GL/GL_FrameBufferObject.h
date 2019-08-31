@@ -13,7 +13,7 @@ namespace TE {
     private:
         unsigned int ID;
         unsigned int renderBufferID;
-        GL_Texture renderTexture = GL_Texture();
+        std::shared_ptr<GL_Texture> renderTexture = std::make_shared<GL_Texture>();
     public:
         GL_FrameBufferObject(int width = 0, int height = 0);
         ~GL_FrameBufferObject() override;
@@ -24,7 +24,7 @@ namespace TE {
         void SetResolution(int width, int height) override;
         Vec2 GetResolution() override;
 
-        Texture* GetRenderTexture() override;
+        std::shared_ptr<Texture> GetRenderTexture() override;
     };
 }
 

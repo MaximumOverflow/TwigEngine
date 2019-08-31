@@ -47,7 +47,7 @@ namespace TE {
 
         void SetFrameBuffer(FrameBufferObject* frameBufferObject);
         bool HasFrameBufer() { return FBO != nullptr; }
-
+        inline ProjectionMode GetProjectionMode() { return projectionMode; }
     };
 
 }

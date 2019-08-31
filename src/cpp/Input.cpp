@@ -17,7 +17,7 @@ using namespace TE;
 bool Input::GetMouseButtonPressed(TE::Event *event, int button) {
     if (event->GetType() != EventType::MouseButtonPress)
         return false;
-    MouseButtonPressedEvent* e = static_cast<MouseButtonPressedEvent*>(event);
+    auto* e = static_cast<MouseButtonPressedEvent*>(event);
 
     return (e->GetButton() == button);
 }
@@ -25,7 +25,7 @@ bool Input::GetMouseButtonPressed(TE::Event *event, int button) {
 bool Input::GetMouseButtonHeld(TE::Event *event, int button) {
     if (event->GetType() != EventType::MouseButtonHold)
         return false;
-    MouseButtonPressedEvent* e = static_cast<MouseButtonPressedEvent*>(event);
+    auto* e = static_cast<MouseButtonPressedEvent*>(event);
 
     return (e->GetButton() == button);
 }
@@ -33,7 +33,7 @@ bool Input::GetMouseButtonHeld(TE::Event *event, int button) {
 bool Input::GetMouseButtonReleased(TE::Event *event, int button) {
     if (event->GetType() != EventType::MouseButtonRelease)
         return false;
-    MouseButtonPressedEvent* e = static_cast<MouseButtonPressedEvent*>(event);
+    auto * e = static_cast<MouseButtonPressedEvent*>(event);
 
     return (e->GetButton() == button);
 }
@@ -41,7 +41,7 @@ bool Input::GetMouseButtonReleased(TE::Event *event, int button) {
 bool Input::GetKeyPressed(Event *event, int key) {
     if (event->GetType() != EventType::KeyPress)
         return false;
-    KeyPressedEvent* e = static_cast<KeyPressedEvent*>(event);
+    auto * e = static_cast<KeyPressedEvent*>(event);
 
     return (e->GetKey() == key);
 }
@@ -49,7 +49,7 @@ bool Input::GetKeyPressed(Event *event, int key) {
 bool Input::GetKeyReleased(Event *event, int key) {
     if (event->GetType() != EventType::KeyRelease)
         return false;
-    KeyPressedEvent* e = static_cast<KeyPressedEvent*>(event);
+    auto* e = static_cast<KeyPressedEvent*>(event);
 
     return (e->GetKey() == key);
 }
@@ -58,43 +58,22 @@ bool Input::GetKeyHeld(Event *event, int key) {
     if (event->GetType() != EventType::KeyHold)
         return false;
 
-    KeyPressedEvent* e = static_cast<KeyPressedEvent*>(event);
+    auto* e = static_cast<KeyPressedEvent*>(event);
     return (e->GetKey() == key);
 }
 
 bool Input::GetKeyPressed(int key) {
-#ifndef TE_PLATFORM_MACOS
-    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
-        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_PRESS);
-#endif
-    return false;
+    return (Renderer::GetActiveAPI()->GetKeyState(key) == KeyState::TE_PRESSED);
 }
 
 bool Input::GetKeyReleased(int key) {
-#ifndef TE_PLATFORM_MACOS
-    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
-        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) == GLFW_RELEASE);
-#endif
-    return false;
+    return (Renderer::GetActiveAPI()->GetKeyState(key) == KeyState::TE_RELEASED);
 }
 
 bool Input::GetKeyHeld(int key) {
-#ifndef TE_PLATFORM_MACOS
-    if (Global::GetActiveAPI() == GraphicsAPI::OpenGL)
-    {
-        return (glfwGetKey(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), key) != GLFW_RELEASE);
-    }
-#endif
-    return false;
+    return (Renderer::GetActiveAPI()->GetKeyState(key) != KeyState::TE_RELEASED);
 }
 
-void Input::SetMouseCursorShown(bool mode) {
-    switch (Global::GetActiveAPI()) {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-        case GraphicsAPI::Vulkan:
-            glfwSetInputMode(((GL_Window*)(Renderer::GetWindow()))->GetGLFWWindowPointer(), GLFW_CURSOR, mode ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-            break;
-#endif
-    }
+void Input::SetMouseCursorShown(bool active) {
+    Renderer::GetActiveAPI()->SetMouseCursor(active);
 }

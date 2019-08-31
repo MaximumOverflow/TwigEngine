@@ -72,7 +72,7 @@ void GL_Shader::Unbind() {
 void GL_Shader::SetUniformMat4f(std::string name, const Mat4& matrix) {
     glUseProgram(ID);
     int uniform = GetUniformFromCache(name);
-    if (uniform < 0)
+    if (uniform < -1)
     {
         uniform = glGetUniformLocation(ID, name.c_str());
         AddUniformToCache(name, uniform);
@@ -83,7 +83,7 @@ void GL_Shader::SetUniformMat4f(std::string name, const Mat4& matrix) {
 void GL_Shader::SetUniformVec3f(std::string name, const Vec3& vec3) {
     glUseProgram(ID);
     int uniform = GetUniformFromCache(name);
-    if (uniform < 0)
+    if (uniform < -1)
     {
         uniform = glGetUniformLocation(ID, name.c_str());
         AddUniformToCache(name, uniform);
@@ -94,7 +94,7 @@ void GL_Shader::SetUniformVec3f(std::string name, const Vec3& vec3) {
 void GL_Shader::SetUniformVec4f(std::string name, const Vec4 &vec4) {
     glUseProgram(ID);
     int uniform = GetUniformFromCache(name);
-    if (uniform < 0)
+    if (uniform < -1)
     {
         uniform = glGetUniformLocation(ID, name.c_str());
         AddUniformToCache(name, uniform);
@@ -105,7 +105,7 @@ void GL_Shader::SetUniformVec4f(std::string name, const Vec4 &vec4) {
 void GL_Shader::SetUniformVec1i(std::string name, int vec1) {
     glUseProgram(ID);
     int uniform = GetUniformFromCache(name);
-    if (uniform < 0)
+    if (uniform < -1)
     {
         uniform = glGetUniformLocation(ID, name.c_str());
         AddUniformToCache(name, uniform);

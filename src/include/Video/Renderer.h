@@ -17,13 +17,14 @@
 #include "Modules/MeshRenderer.h"
 #include "Objects/GameObjects/Camera.h"
 #include "Objects/GameObjects/Light.h"
+#include "RenderingAPI.h"
 
 namespace TE {
     class Renderer {
         friend class GL_Window;
     private:
-        static Window* window;
-        static Window* CreateWindow(unsigned int width, unsigned int height, std::string title);
+        static std::shared_ptr<Window> CreateWindow(unsigned int width, unsigned int height, std::string title);
+        static std::unique_ptr<RenderingAPI> activeAPI;
 
         static std::vector<Camera*> cameras;
         static std::vector<Light*> lights;
@@ -31,18 +32,17 @@ namespace TE {
 
         static std::unordered_map<Mesh*, std::vector<MeshRenderer*>> renderQueue3D;
 
-        static Shader* defaultShader;
-        static Texture* defaultTexture;
+        static std::shared_ptr<Shader> defaultShader;
+        static std::shared_ptr<Texture> defaultTexture;
         static std::string defaultVertex, defaultFragment;
         static void CompileDefaultShader();
     public:
         static int Init(GraphicsAPI API);
         static int Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title);
-        static void Terminate();
+        static const std::unique_ptr<RenderingAPI>& GetActiveAPI() { return activeAPI; }
 
-        static GraphicsAPI GetCurrentAPI();
-        static bool WindowIsOpen();
-        static const Window* GetWindow();
+        static bool HasOpenWindows();
+        static std::shared_ptr<Window> GetActiveWindow();
         static void BindDefaultShader() { defaultShader->Bind(); };
 
         static void AddCamera(Camera* camera);
@@ -51,12 +51,8 @@ namespace TE {
         static void AddLight(Light* light);
         static void RemoveLight(Light* light);
         static void SetMaximumSimultaneousLights(unsigned int lightCount);
-
-        static void Draw(VertexArrayObject* VAO);
         static void Draw(GameObject* gameObject);
-        static void Draw(Mesh* mesh, MeshRenderer* meshRenderer);
         static void DrawQueue();
-        static void DrawQueueInstanced();
         static void Clear();
         static void SwapBuffers();
         static void SetSwapInterval(short interval);

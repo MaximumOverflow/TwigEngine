@@ -120,6 +120,8 @@ void APIENTRY GL_Window::GLDebugMessageCallback(GLenum source, GLenum type, GLui
 }
 
 GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title) {
+    Debug::Log("Creating new OpenGL window...");
+
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(window);
     TE::Debug::Log("Initializing OpenGL backend...");
@@ -128,6 +130,9 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     else
         TE::Debug::Log("OpenGL successfully initialized");
     glfwShowWindow(window);
+
+    glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
+
     glDebugMessageCallback(GLDebugMessageCallback, nullptr);
     glEnable(GL_DEBUG_OUTPUT);
 
@@ -160,6 +165,7 @@ GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title)
     this->title = title;
 
     glfwSetCursorPos(window, width/2,height/2);
+    Debug::Log("OpenGL window successfully created");
 }
 
 
@@ -223,8 +229,8 @@ void GL_Window::HandleAndTranslateEvents(GLFWwindow *window, int width, int heig
     EventHandler::DispatchEvent(new WindowResizedEvent(width, height));
     glViewport(0,0, width, height);
     glScissor(0,0,width,height);
-    Renderer::window->width = static_cast<unsigned int>(width);
-    Renderer::window->height = static_cast<unsigned int>(height);
+    Renderer::GetActiveWindow()->width = static_cast<unsigned int>(width);
+    Renderer::GetActiveWindow()->height = static_cast<unsigned int>(height);
 }
 
 void GL_Window::TranslateEvents(GLFWwindow *window, int minimized) {

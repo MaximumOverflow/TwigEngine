@@ -13,11 +13,13 @@ namespace TE {
     private:
         Transform* transform = AddModule<Transform>();
     public:
-        Light(Vec3 position = Vec3(0,0,0), Vec4 color = Vec4(1.f,1.f,1.f,1.f));
+        enum class LightType { POINT, SPOT, DIRECTIONAL };
+        Light(Vec3 position = Vec3(0,0,0), Vec4 color = Vec4(1.f,1.f,1.f,1.f), LightType type = LightType::POINT);
         ~Light();
 
         Vec4 color;
         double drawDistance = 500;
+        LightType type;
     };
 }
 

@@ -15,6 +15,6 @@ bool Global::GetDebugState() {
     return debug;
 }
 
-const TE::GraphicsAPI &Global::GetActiveAPI() {
+GraphicsAPI Global::GetActiveAPI() {
     return activeAPI;
 }

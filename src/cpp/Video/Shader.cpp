@@ -13,23 +13,22 @@
 #include "Video/GL/GL_Shader.h"
 #endif
 
-TE::Shader* TE::Shader::Create(std::string vertexSource, std::string fragmentSource)
+using namespace TE;
+
+std::shared_ptr<Shader> TE::Shader::Create(std::string vertexSource, std::string fragmentSource)
 {
-    Shader* shader;
     switch (Global::GetActiveAPI())
     {
 #ifndef TE_PLATFORM_MACOS
         case GraphicsAPI::OpenGL:
             Debug::Log("Creating OpenGL shader...");
-            shader = new GL_Shader(vertexSource.c_str(), fragmentSource.c_str());
-            break;
+            return std::make_shared<GL_Shader>(vertexSource.c_str(), fragmentSource.c_str());
 #endif
 
         default:
             Debug::Log("Failed to create shader due to unimplemented API functions", Debug::Severity::Error);
-            break;
+            return nullptr;
     }
-    return shader;
 }
 
 TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragmentPath) {
@@ -77,13 +76,12 @@ TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragm
 }
 
 int TE::Shader::GetUniformFromCache(std::string name) {
-    auto uniform = uniformCache.find(name);
-    if (uniform == uniformCache.end())
-        return -1;
+    if (uniformCache.find(name) == uniformCache.end())
+        return -5;
     return uniformCache[name];
 }
 
 void TE::Shader::AddUniformToCache(std::string name, int id) {
     Debug::Log("Adding \"" + name + "\" to uniform cache...");
-    uniformCache.emplace(std::make_pair(name, id));
+    uniformCache[name] = id;
 }
