@@ -7,9 +7,8 @@
 
 #include <string>
 
-#include "Objects/GameObjects/GameObject.h"
-
 namespace TE {
+    class GameObject;
     class Module {
     private:
         GameObject* parent;
@@ -17,6 +16,7 @@ namespace TE {
         Module(GameObject* parent) : parent{parent} {};
         GameObject* GetParent();
         virtual void Update() {};
+        virtual bool AllowMultipleInstances() = 0;
     };
 }
 #endif //TWIG_ENGINE_MODULE_H

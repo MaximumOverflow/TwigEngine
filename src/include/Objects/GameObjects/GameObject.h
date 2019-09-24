@@ -8,9 +8,9 @@
 #include <vector>
 
 #include "Debug.h"
+#include "Modules/Module.h"
 
 namespace TE {
-    class Module;
     class GameObject {
     protected:
         std::vector<Module*> modules;
@@ -24,11 +24,19 @@ namespace TE {
         template <typename T>
         T* AddModule() {
             T* module = new T(this);
-            Module* mod = dynamic_cast<Module*>(module);
+            auto* mod = dynamic_cast<Module*>(module);
             if (mod)
-                modules.push_back(mod);
+            {
+                if (mod->AllowMultipleInstances() || GetModule<T>() == nullptr)
+                    modules.push_back(mod);
+                else
+                {
+                    Debug::Log("This module type does not support multiple instances", Debug::Severity::Error);
+                    delete mod;
+                }
+            }
             else
-                Debug::Log("The provided class does not derive from Module", Debug::Severity::Warning);
+                Debug::Log("The provided class does not derive from Module", Debug::Severity::Error);
             return module;
         }
 

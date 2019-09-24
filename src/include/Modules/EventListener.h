@@ -21,6 +21,8 @@ namespace TE {
         void HandleEvent(Event* event);
         void SetID(unsigned long ID);
         void AddCallback(std::function<void(Event*)> callback);
+
+        bool AllowMultipleInstances() override { return false; };
     };
 }
 

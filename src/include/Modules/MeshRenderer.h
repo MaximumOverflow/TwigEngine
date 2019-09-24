@@ -36,6 +36,8 @@ namespace TE {
         Transform* GetParentTransform() const;
 
         void Update() override;
+
+        bool AllowMultipleInstances() override { return true; };
     };
 }
 

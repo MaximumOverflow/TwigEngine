@@ -44,6 +44,8 @@ namespace TE {
         void Scale(Vec3 scale);
 
         void Reset();
+
+        bool AllowMultipleInstances() override { return false; };
     };
 }
 
