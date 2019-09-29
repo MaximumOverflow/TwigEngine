@@ -14,6 +14,7 @@ namespace TE {
         GameObject* parent;
     public:
         Module(GameObject* parent) : parent{parent} {};
+        virtual ~Module() = default;
         GameObject* GetParent();
         virtual void Update() {};
         virtual bool AllowMultipleInstances() = 0;

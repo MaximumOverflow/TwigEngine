@@ -29,6 +29,7 @@ namespace TE {
         static void RemoveLayer(Layer* layer);
         static Overlay* AddOverlay(Overlay* overlay);
         static void RemoveOverlay(Overlay* overlay);
+        static const std::vector<Layer*>& GetLayerList();
     };
 }
 

@@ -31,7 +31,7 @@ std::shared_ptr<Shader> TE::Shader::Create(std::string vertexSource, std::string
     }
 }
 
-TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragmentPath) {
+std::shared_ptr<Shader> TE::Shader::CreateFromFile(std::string vertexPath, std::string fragmentPath) {
     Shader* shader;
 
     std::string vertexSrc, fragmentSrc, tmp;
@@ -59,20 +59,7 @@ TE::Shader *TE::Shader::CreateFromFile(std::string vertexPath, std::string fragm
 
     const char *cVertexSrc = vertexSrc.c_str(), *cFragmentSrc = fragmentSrc.c_str();
 
-    switch (Global::GetActiveAPI())
-    {
-#ifndef TE_PLATFORM_MACOS
-        case GraphicsAPI::OpenGL:
-            Debug::Log("Creating OpenGL shader...");
-            shader = new GL_Shader(cVertexSrc, cFragmentSrc);
-            break;
-#endif
-
-        default:
-            Debug::Log("Failed to create shader due to undefined API implementation.", Debug::Severity::Error);
-            break;
-    }
-    return shader;
+    return Create(vertexSrc, fragmentSrc);
 }
 
 int TE::Shader::GetUniformFromCache(std::string name) {

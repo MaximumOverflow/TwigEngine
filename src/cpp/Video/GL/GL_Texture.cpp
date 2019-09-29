@@ -39,7 +39,10 @@ TE::GL_Texture::GL_Texture(const std::string path, bool retainBuffer) {
     glTextureSubImage2D(ID, 0, 0, 0, (unsigned int) width, (unsigned int) height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
     if(!retainBuffer)
+    {
         stbi_image_free(buffer);
+        buffer = nullptr;
+    }
 
     Debug::Log("OpenGL Texture successfully created");
 }

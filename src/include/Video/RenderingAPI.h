@@ -31,6 +31,8 @@ namespace TE {
 
         virtual short GetKeyState(int key) = 0;
         virtual void SetMouseCursor(bool active) = 0;
+
+        virtual ~RenderingAPI() = default;
     };
 }
 

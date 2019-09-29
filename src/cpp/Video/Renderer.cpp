@@ -136,7 +136,6 @@ void Renderer::CompileDefaultShader() {
             "   vec4 pos = (te_projection * te_view * te_model) * vec4(te_position, 1.0);\n"
             "   gl_Position = pos;\n"
             "   te_frag_position = vec3(te_model * vec4(te_position, 1.0));\n"
-//            "   te_frag_normal = vec3(transpose(inverse(mat3(te_model))) * te_normal);\n"
             "   te_frag_normal = vec3(mat3(te_model) * te_normal);\n"
             "   te_frag_texture_position = te_texture_position;\n"
             "}"

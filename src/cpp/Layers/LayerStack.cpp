@@ -14,7 +14,7 @@ unsigned long LayerStack::insertLocation;
 void LayerStack::Propagate(Event *event) {
     for (auto* layer : layers) {
         if (event->handled)
-            break;
+            return;
         else {
             layer->OnEvent(event);
             layer->Notify(event);
@@ -27,7 +27,7 @@ void LayerStack::Propagate_Reverse(Event *event) {
     {
         Layer* layer = layers.at(i);
         if (event->handled)
-            break;
+            return;
         else {
             layer->OnEvent(event);
             layer->Notify(event);
@@ -86,4 +86,8 @@ void LayerStack::UpdateAll() {
         layer->Update();
     }
     Overlay::EndFrame();
+}
+
+const std::vector<Layer*> &LayerStack::GetLayerList() {
+    return layers;
 }

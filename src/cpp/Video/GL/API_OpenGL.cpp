@@ -15,6 +15,8 @@ TE::API_OpenGL::API_OpenGL() {
         Debug::Log("Failed to initialize GLFW", Debug::Severity::Error);
 }
 TE::API_OpenGL::~API_OpenGL() {
+    for (auto& window : windows)
+        glfwDestroyWindow(window->GetGLFWWindowPointer());
     glfwTerminate();
 }
 

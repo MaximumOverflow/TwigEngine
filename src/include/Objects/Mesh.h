@@ -11,9 +11,10 @@
 #include "Video/VertexBufferObject.h"
 #include "Video/IndexBufferObject.h"
 #include "Types/Types.h"
+#include "Asset.h"
 
 namespace TE {
-    class Mesh {
+    class Mesh : public Asset {
     private:
         VertexArrayObject* VAO;
         VertexBufferObject* VBO;
@@ -39,8 +40,7 @@ namespace TE {
 
         static std::shared_ptr<Mesh> Create();
         static std::shared_ptr<Mesh> Create(std::string meshPath, TE::FileType fileType);
-        ~Mesh();
-
+        ~Mesh() override;
     };
 }
 

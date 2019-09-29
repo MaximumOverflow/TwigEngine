@@ -11,17 +11,17 @@
 
 #include "Types/Types.h"
 #include "External/robin_hood.h"
-
+#include "Asset.h"
 
 namespace TE {
-    class Shader {
+    class Shader : public Asset {
     protected:
         robin_hood::unordered_map<std::string, int> uniformCache;
         int GetUniformFromCache(std::string name);
         void AddUniformToCache(std::string name, int id);
     public:
         static std::shared_ptr<Shader> Create(std::string vertexSource, std::string fragmentSource);
-        static Shader* CreateFromFile(std::string vertexPath, std::string fragmentPath);
+        static std::shared_ptr<Shader> CreateFromFile(std::string vertexPath, std::string fragmentPath);
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;

@@ -4,6 +4,7 @@
 #include "Time.h"
 #include "Debug.h"
 #include "Application.h"
+#include "ResourceManager.h"
 
 #include "Video/Renderer.h"
 

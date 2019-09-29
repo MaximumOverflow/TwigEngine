@@ -19,6 +19,7 @@ using namespace TE;
 Mesh::~Mesh() {
     delete VAO;
     delete VBO;
+    delete instanceVBO;
     delete IBO;
 }
 

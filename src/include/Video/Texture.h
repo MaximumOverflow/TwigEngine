@@ -7,9 +7,10 @@
 
 #include <string>
 #include <memory>
+#include "Asset.h"
 
 namespace TE {
-    class Texture {
+    class Texture : public Asset {
     protected:
         unsigned int slot = 0;
         int width = 0, height = 0, bpp = 0;

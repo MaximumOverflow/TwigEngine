@@ -8,6 +8,8 @@
 #include "Events/EventHandler.h"
 #include "EntityManager.h"
 #include "Global.h"
+#include "Audio/AudioManager.h"
+#include "ResourceManager.h"
 
 #include <chrono>
 
@@ -18,6 +20,8 @@ void Application::Init() {
     eventListener.AddCallback(TE_BIND_CALLBACK(Application::Close));
     LayerStack::Init();
     timedUpdateCountdown = Global::timedUpdateInterval;
+    AudioManager::Init();
+    ResourceManager::Init();
 }
 
 void Application::Execute() {
@@ -53,6 +57,7 @@ void Application::Execute() {
 
     //Cleanup
     LayerStack::Clear();
+    AudioManager::Terminate();
 }
 
 void Application::Close(Event* event) {

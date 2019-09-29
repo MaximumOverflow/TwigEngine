@@ -10,6 +10,9 @@ namespace TE {
         Layer *next, *previous;
         std::vector<EventListener*> subscribedListeners;
 
+    protected:
+        std::string name = "Generic Layer";
+
     public:
         virtual ~Layer() = default;
 
