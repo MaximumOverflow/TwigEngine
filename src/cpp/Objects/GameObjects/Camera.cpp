@@ -61,6 +61,7 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode) {
     }
 
     this->projectionMode = projectionMode;
+    automaticAspectratio = true;
 
 }
 
@@ -90,11 +91,18 @@ void TE::Camera::SetProjectionMode(TE::ProjectionMode projectionMode, int width,
     }
 
     this->projectionMode = projectionMode;
+    automaticAspectratio = false;
 }
 
 void TE::Camera::SetFrameBuffer(TE::FrameBufferObject *frameBufferObject) {
     FBO = frameBufferObject;
     SetProjectionMode(this->projectionMode, 1, 1);
+}
+
+void TE::Camera::UpdateProjection() {
+    if (!automaticAspectratio) return;
+
+    SetProjectionMode(projectionMode);
 }
 
 void TE::Camera::CameraTransform::Rotate(TE::Vec3 rotation) {

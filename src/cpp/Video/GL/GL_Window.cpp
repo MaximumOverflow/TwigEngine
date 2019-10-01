@@ -122,6 +122,7 @@ void APIENTRY GL_Window::GLDebugMessageCallback(GLenum source, GLenum type, GLui
 GL_Window::GL_Window(unsigned int width, unsigned int height, std::string title) {
     Debug::Log("Creating new OpenGL window...");
 
+//    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(window);
     TE::Debug::Log("Initializing OpenGL backend...");
@@ -231,6 +232,7 @@ void GL_Window::OnWindowResizeEvent(GLFWwindow *window, int width, int height) {
 //    glScissor(0,0,width,height);
     Renderer::GetActiveWindow()->width = static_cast<unsigned int>(width);
     Renderer::GetActiveWindow()->height = static_cast<unsigned int>(height);
+    Renderer::UpdateCameraProjections();
 }
 
 void GL_Window::OnWindowMinimizeEvent(GLFWwindow *window, int minimized) {

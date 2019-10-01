@@ -60,6 +60,7 @@ int Renderer::Init(GraphicsAPI API) {
 int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title) {
     Init(API);
     CreateWindow(width, height, std::move(title));
+    SetSwapInterval(1);
     CompileDefaultShader();
 
     const unsigned char* texBuffer = new unsigned char[4*4] {
@@ -289,5 +290,10 @@ void Renderer::DrawQueue() {
 
 std::shared_ptr<Window> Renderer::GetActiveWindow() {
     return activeAPI->GetCurrentWindow();
+}
+
+void Renderer::UpdateCameraProjections() {
+    for (auto& camera : cameras)
+        camera->UpdateProjection();
 }
 

@@ -19,6 +19,8 @@ namespace TE {
         FrameBufferObject* FBO = nullptr;
         ProjectionMode projectionMode;
 
+        bool automaticAspectratio;
+
         class CameraTransform : public Transform
         {
         private:
@@ -43,6 +45,7 @@ namespace TE {
         const glm::mat4& GetTransformMatrix() const;
         void SetProjectionMode(ProjectionMode projectionMode);
         void SetProjectionMode(ProjectionMode projectionMode, int width, int height);
+        void UpdateProjection();
         double drawDistance = 500;
 
         void SetFrameBuffer(FrameBufferObject* frameBufferObject);

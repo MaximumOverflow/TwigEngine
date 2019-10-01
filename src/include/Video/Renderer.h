@@ -47,6 +47,7 @@ namespace TE {
 
         static void AddCamera(Camera* camera);
         static void RemoveCamera(Camera* camera);
+        static void UpdateCameraProjections();
 
         static void AddLight(Light* light);
         static void RemoveLight(Light* light);
