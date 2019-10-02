@@ -10,6 +10,8 @@
 #include "Global.h"
 #include "Audio/AudioManager.h"
 #include "ResourceManager.h"
+#include "Input.h"
+#include "Layers/ApplicationEventLayer.h"
 
 #include <chrono>
 
@@ -17,11 +19,13 @@ using namespace TE;
 
 void Application::Init() {
     running = true;
-    eventListener.AddCallback(TE_BIND_CALLBACK(Application::Close));
     LayerStack::Init();
+    LayerStack::AddLayer(new ApplicationEventLayer)->AddListener(&eventListener);
+    eventListener.AddCallback(TE_BIND_CALLBACK(Application::Close));
     timedUpdateCountdown = Global::timedUpdateInterval;
     AudioManager::Init();
     ResourceManager::Init();
+    Input::Init();
 }
 
 void Application::Execute() {
@@ -32,11 +36,11 @@ void Application::Execute() {
     {
         auto start = std::chrono::high_resolution_clock::now();
         timedUpdateCountdown-=Time::deltaTime;
+
         Renderer::Clear();
 
         EventHandler::PollEvents();
         Run();
-
 
         EntityManager::UpdateAll();
         if (timedUpdateCountdown <= 0)
@@ -45,10 +49,10 @@ void Application::Execute() {
             timedUpdateCountdown = Global::timedUpdateInterval;
         }
 
-        Renderer::DrawQueue();
         LayerStack::UpdateAll();
 
         Renderer::SwapBuffers();
+
         auto end = std::chrono::high_resolution_clock::now();
 
         auto time = end - start;
@@ -64,6 +68,7 @@ void Application::Close(Event* event) {
     if (event->GetType() == EventType::WindowClose)
         running = false;
 }
+
 
 int main() {
     Debug::Log("Initializing application...");

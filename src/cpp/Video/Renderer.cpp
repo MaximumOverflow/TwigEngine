@@ -3,9 +3,16 @@
 //
 
 #include "Video/Renderer.h"
+#include "ResourceManager.h"
 #include "Debug.h"
 #include "Global.h"
 #include "Modules/MeshRenderer.h"
+#include "Layers/RenderingLayer.h"
+#include "Layers/LayerStack.h"
+
+#include "InternalShaders/DefaultDiffuse.h"
+#include "InternalShaders/DefaultFlat.h"
+
 
 #ifndef TE_PLATFORM_MACOS
     #include "Video/GL/API_OpenGL.h"
@@ -32,12 +39,13 @@ std::vector<GameObject*> Renderer::renderQueue;
 std::unordered_map<Mesh*, std::vector<MeshRenderer*>> Renderer::renderQueue3D;
 
 std::shared_ptr<Shader> Renderer::defaultShader = nullptr;
-std::string Renderer::defaultVertex;
-std::string Renderer::defaultFragment;
 std::shared_ptr<Texture> Renderer::defaultTexture;
 
 int Renderer::Init(GraphicsAPI API) {
     Debug::Log("Initializing renderer...");
+
+    LayerStack::AddLayer(new RenderingLayer());
+
     Global::activeAPI = API;
     switch (API)
     {
@@ -61,7 +69,7 @@ int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std
     Init(API);
     CreateWindow(width, height, std::move(title));
     SetSwapInterval(1);
-    CompileDefaultShader();
+    RecompileInternalShaders();
 
     const unsigned char* texBuffer = new unsigned char[4*4] {
             255, 255, 255, 255,
@@ -71,6 +79,9 @@ int Renderer::Init(GraphicsAPI API, unsigned int width, unsigned int height, std
     };
     defaultTexture = Texture::Create(texBuffer, 2,2,4);
     delete[] texBuffer;
+
+    RecompileInternalShaders();
+    defaultShader = ResourceManager::GetAsset<Shader>("DefaultDiffuse");
     return 0;
 }
 
@@ -117,60 +128,12 @@ void Renderer::SetSwapInterval(short interval) {
     }
 }
 
-void Renderer::CompileDefaultShader() {
-    defaultVertex = {
-            "#version 330 core\n"
-            "\n"
-            "layout (location = 0) in vec3 te_position;\n"
-            "layout (location = 1) in vec2 te_texture_position;\n"
-            "layout (location = 2) in vec3 te_normal;\n"
-            "\n"
-            "uniform mat4 te_projection, te_view, te_model;\n"
-            "uniform vec3 te_light_position[" + std::to_string(Global::maxSimultaneousLights) + "]\n;"
-            "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
-            "\n"
-            "out vec3 te_frag_normal, te_frag_position;\n"
-            "out vec2 te_frag_texture_position;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "   vec4 pos = (te_projection * te_view * te_model) * vec4(te_position, 1.0);\n"
-            "   gl_Position = pos;\n"
-            "   te_frag_position = vec3(te_model * vec4(te_position, 1.0));\n"
-            "   te_frag_normal = vec3(mat3(te_model) * te_normal);\n"
-            "   te_frag_texture_position = te_texture_position;\n"
-            "}"
-    };
+void Renderer::RecompileInternalShaders() {
+    auto diffuse = s_DefaultDiffuse();
+    ResourceManager::AddAsset("DefaultDiffuse", Shader::Create(diffuse.first, diffuse.second));
 
-    defaultFragment = {
-            "#version 330 core\n"
-            "\n"
-            "in vec3 te_frag_normal, te_frag_position;\n"
-            "in vec2 te_frag_texture_position;\n"
-            "uniform vec3 te_light_position[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
-            "uniform vec4 te_light_color[" + std::to_string(Global::maxSimultaneousLights) + "];\n"
-            "uniform sampler2D te_texture_slot;\n"
-            "\n"
-            "out vec4 color;\n"
-            "\n"
-            "vec3 normal = normalize(te_frag_normal);\n"
-            "\n"
-            "vec4 light;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "   for (int i = 0; i < " + std::to_string(Global::maxSimultaneousLights) + "; i++)\n"
-            "   {\n"
-            "       float distance = abs(distance(te_light_position[i], te_frag_position));"
-            "       "
-            "       vec3 lightDir = normalize(te_light_position[i] - te_frag_position);\n"
-            "       light += (te_light_color[i] * dot(normal, lightDir) * te_light_color[i].w) / distance ;\n"
-            "   }\n"
-            "   vec4 textureColor = texture(te_texture_slot, te_frag_texture_position);\n"
-            "   color = max(vec4((textureColor * light).xyz, 1.0), 0.1);\n"
-            "}"
-    };
-    defaultShader = Shader::Create(defaultVertex, defaultFragment);
+    auto flat = s_DefaultFlat();
+    ResourceManager::AddAsset("DefaultFlat", Shader::Create(flat.first, flat.second));
 }
 
 void Renderer::AddLight(Light *light) {
@@ -186,7 +149,7 @@ void Renderer::RemoveLight(Light *light) {
 
 void Renderer::SetMaximumSimultaneousLights(unsigned int lightCount) {
     Global::maxSimultaneousLights = lightCount;
-    CompileDefaultShader();
+    RecompileInternalShaders();
 }
 
 void Renderer::DrawQueue() {
@@ -295,5 +258,13 @@ std::shared_ptr<Window> Renderer::GetActiveWindow() {
 void Renderer::UpdateCameraProjections() {
     for (auto& camera : cameras)
         camera->UpdateProjection();
+}
+
+void Renderer::SetDefaultShader(std::shared_ptr<Shader> shader) {
+    defaultShader = shader;
+}
+
+void Renderer::ClearQueue() {
+    renderQueue.clear();
 }
 

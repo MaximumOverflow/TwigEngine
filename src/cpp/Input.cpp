@@ -1,6 +1,7 @@
 //
 // Created by max on 21/07/19.
 //
+
 #include "Input.h"
 #include "Events/MouseEvents.h"
 #include "Events/KeyboardEvents.h"
@@ -8,13 +9,11 @@
 #include "Global.h"
 #include "TE_Macros.h"
 
-#ifndef TE_PLATFORM_MACOS
-#include "Video/GL/GL_Window.h"
-#endif
-
 using namespace TE;
 
-bool Input::GetMouseButtonPressed(TE::Event *event, int button) {
+InputLayer* Input::inputLayer;
+
+bool Input::GetMouseButtonPressed(InputEvent *event, int button) {
     if (event->GetType() != EventType::MouseButtonPress)
         return false;
     auto* e = static_cast<MouseButtonPressedEvent*>(event);
@@ -22,7 +21,7 @@ bool Input::GetMouseButtonPressed(TE::Event *event, int button) {
     return (e->GetButton() == button);
 }
 
-bool Input::GetMouseButtonHeld(TE::Event *event, int button) {
+bool Input::GetMouseButtonHeld(InputEvent *event, int button) {
     if (event->GetType() != EventType::MouseButtonHold)
         return false;
     auto* e = static_cast<MouseButtonPressedEvent*>(event);
@@ -30,7 +29,7 @@ bool Input::GetMouseButtonHeld(TE::Event *event, int button) {
     return (e->GetButton() == button);
 }
 
-bool Input::GetMouseButtonReleased(TE::Event *event, int button) {
+bool Input::GetMouseButtonReleased(InputEvent *event, int button) {
     if (event->GetType() != EventType::MouseButtonRelease)
         return false;
     auto * e = static_cast<MouseButtonPressedEvent*>(event);
@@ -38,7 +37,7 @@ bool Input::GetMouseButtonReleased(TE::Event *event, int button) {
     return (e->GetButton() == button);
 }
 
-bool Input::GetKeyPressed(Event *event, int key) {
+bool Input::GetKeyPressed(InputEvent *event, int key) {
     if (event->GetType() != EventType::KeyPress)
         return false;
     auto * e = static_cast<KeyPressedEvent*>(event);
@@ -46,7 +45,7 @@ bool Input::GetKeyPressed(Event *event, int key) {
     return (e->GetKey() == key);
 }
 
-bool Input::GetKeyReleased(Event *event, int key) {
+bool Input::GetKeyReleased(InputEvent *event, int key) {
     if (event->GetType() != EventType::KeyRelease)
         return false;
     auto* e = static_cast<KeyPressedEvent*>(event);
@@ -54,7 +53,7 @@ bool Input::GetKeyReleased(Event *event, int key) {
     return (e->GetKey() == key);
 }
 
-bool Input::GetKeyHeld(Event *event, int key) {
+bool Input::GetKeyHeld(InputEvent *event, int key) {
     if (event->GetType() != EventType::KeyHold)
         return false;
 
@@ -76,4 +75,20 @@ bool Input::GetKeyHeld(int key) {
 
 void Input::SetMouseCursorShown(bool active) {
     Renderer::GetActiveAPI()->SetMouseCursor(active);
+}
+
+void Input::Init() {
+    inputLayer = LayerStack::AddLayer(new InputLayer());
+}
+
+bool Input::GetKeyPressed(Event *event, int key) {
+    return GetKeyPressed((InputEvent*) event, key);
+}
+
+bool Input::GetKeyReleased(Event *event, int key) {
+    return GetKeyReleased((InputEvent*) event, key);
+}
+
+bool Input::GetKeyHeld(Event *event, int key) {
+    return GetKeyHeld((InputEvent*) event, key);
 }

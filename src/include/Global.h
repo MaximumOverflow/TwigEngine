@@ -20,6 +20,7 @@ namespace TE {
         static unsigned int maxSimultaneousLights;
     public:
         static bool GetDebugState();
+        static unsigned int GetMaxSimultaneousLightsCount();
         static GraphicsAPI GetActiveAPI();
     };
 }

@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 
 namespace TE {
-    class MouseEvent : public TE::Event
+    class MouseEvent : public InputEvent
     {
     protected:
         static double x, y;
@@ -27,7 +27,7 @@ namespace TE {
             MouseEvent::x = x;
             MouseEvent::y = y;
         }
-        TE::EventType GetType() override;
+        EventType GetType() override;
     };
 
     class MouseButtonPressedEvent : public MouseEvent
@@ -36,7 +36,7 @@ namespace TE {
         int button;
     public:
         inline explicit MouseButtonPressedEvent(int button) :  button{button} {}
-        TE::EventType GetType() override;
+        EventType GetType() override;
         inline int GetButton() { return button; }
     };
 
@@ -46,7 +46,7 @@ namespace TE {
         int button;
     public:
         inline MouseButtonReleasedEvent(int button ): button{button} {}
-        TE::EventType GetType() override;
+        EventType GetType() override;
         inline int GetButton() { return button; }
     };
 
@@ -56,7 +56,7 @@ namespace TE {
         int button;
     public:
         inline MouseButtonHeldEvent(int button) : button{button} {}
-        TE::EventType GetType() override;
+        EventType GetType() override;
         inline int GetButton() { return button; }
     };
 
@@ -66,7 +66,7 @@ namespace TE {
         double scrollX, scrollY;
     public:
         inline MouseScrolledEvent(double scrollX, double scrollY) :  scrollX{scrollX}, scrollY{scrollY} {}
-        TE::EventType GetType() override;
+        EventType GetType() override;
         inline glm::vec2 GetScrolling() { return glm::vec2(scrollX, scrollY); }
     };
 }

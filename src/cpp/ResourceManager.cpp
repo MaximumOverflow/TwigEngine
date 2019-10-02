@@ -60,3 +60,23 @@ std::shared_ptr<Asset> ResourceManager::CreateAsset(std::string name) {
 
     return entry.second;
 }
+
+void ResourceManager::AddAsset(std::string name, std::string type, std::string path) {
+    std::pair<std::string, std::string> info(type, path);
+    assets[name] = std::pair<std::pair<std::string, std::string>, std::shared_ptr<Asset>>(info, nullptr);
+}
+
+void ResourceManager::AddAsset(std::string name, std::shared_ptr<Asset> asset) {
+
+    std::string type;
+
+    if (dynamic_cast<Mesh*>(asset.get()))
+         type = "Mesh";
+    else if (dynamic_cast<Texture*>(asset.get()))
+        type = "Texture";
+    else if (dynamic_cast<Shader*>(asset.get()))
+        type = "Shader";
+
+    std::pair<std::string, std::string> info(type, "$INTERNAL");
+    assets[name] = std::pair<std::pair<std::string, std::string>, std::shared_ptr<Asset>>(info, asset);
+}

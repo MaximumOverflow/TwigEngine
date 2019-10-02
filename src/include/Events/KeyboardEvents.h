@@ -7,39 +7,42 @@
 
 #include "Event.h"
 
-class KeyboardEvent : public TE::Event
-{
-public:
-    int GetCategories() override;
-};
+namespace TE {
+    class KeyboardEvent : public InputEvent
+    {
+    public:
+        int GetCategories() override;
+    };
 
-class KeyPressedEvent : public KeyboardEvent
-{
+    class KeyPressedEvent : public KeyboardEvent
+    {
     private:
         int key;
     public:
-        inline KeyPressedEvent(int key) :  key{key} {}
-        TE::EventType GetType() override;
+        explicit KeyPressedEvent(int key) :  key{key} {}
+        EventType GetType() override;
         inline int GetKey() { return key; }
-};
+    };
 
-class KeyHeldEvent : public KeyboardEvent
-{
+    class KeyHeldEvent : public KeyboardEvent
+    {
     private:
         int key;
     public:
-        inline KeyHeldEvent(int key) :  key{key} {}
-        TE::EventType GetType() override;
+        explicit KeyHeldEvent(int key) :  key{key} {}
+        EventType GetType() override;
         inline int GetKey() { return key; }
-};
+    };
 
-class KeyReleasedEvent : public KeyboardEvent
-{
+    class KeyReleasedEvent : public KeyboardEvent
+    {
     private:
         int key;
     public:
-        inline KeyReleasedEvent(int key) :  key{key} {}
-        TE::EventType GetType() override;
+        explicit KeyReleasedEvent(int key) :  key{key} {}
+        EventType GetType() override;
         inline int GetKey() { return key; }
-};
+    };
+}
+
 #endif //TWIG_ENGINE_KEYBOARDEVENTS_H

@@ -39,8 +39,9 @@ namespace TE {
                 return nullptr;
             }
         }
-//        template <typename T>   static std::shared_ptr<T> AddAsset(std::string name, std::string path);
-//                                static std::shared_ptr<Asset> AddAsset(std::string name, std::string type, std::string path);
+
+        static void AddAsset(std::string name, std::string type, std::string path);
+        static void AddAsset(std::string name, std::shared_ptr<Asset> asset);
     };
 }
 

@@ -2,6 +2,8 @@
 // Created by max on 19/07/19.
 //
 
+#include <Global.h>
+
 #include "../include/Global.h"
 
 using namespace TE;
@@ -17,4 +19,8 @@ bool Global::GetDebugState() {
 
 GraphicsAPI Global::GetActiveAPI() {
     return activeAPI;
+}
+
+unsigned int Global::GetMaxSimultaneousLightsCount() {
+    return maxSimultaneousLights;
 }

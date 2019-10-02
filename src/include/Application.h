@@ -6,7 +6,7 @@
 #define TWIG_ENGINE_TE_APPLICATION_H
 
 #include "Video/Renderer.h"
-#include "Modules/EventListener.h"
+#include "Modules/Listeners/EventListener.h"
 
 namespace TE {
     class Application {

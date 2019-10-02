@@ -22,6 +22,8 @@
 namespace TE {
     class Renderer {
         friend class GL_Window;
+        friend class RenderingLayer;
+        friend class Application;
     private:
         static std::shared_ptr<Window> CreateWindow(unsigned int width, unsigned int height, std::string title);
         static std::unique_ptr<RenderingAPI> activeAPI;
@@ -34,8 +36,13 @@ namespace TE {
 
         static std::shared_ptr<Shader> defaultShader;
         static std::shared_ptr<Texture> defaultTexture;
-        static std::string defaultVertex, defaultFragment;
-        static void CompileDefaultShader();
+        static void RecompileInternalShaders();
+
+        static void DrawQueue();
+        static void ClearQueue();
+        static void Clear();
+        static void SwapBuffers();
+
     public:
         static int Init(GraphicsAPI API);
         static int Init(GraphicsAPI API, unsigned int width, unsigned int height, std::string title);
@@ -44,6 +51,7 @@ namespace TE {
         static bool HasOpenWindows();
         static std::shared_ptr<Window> GetActiveWindow();
         static void BindDefaultShader() { defaultShader->Bind(); };
+        static void SetDefaultShader(std::shared_ptr<Shader> shader);
 
         static void AddCamera(Camera* camera);
         static void RemoveCamera(Camera* camera);
@@ -53,9 +61,6 @@ namespace TE {
         static void RemoveLight(Light* light);
         static void SetMaximumSimultaneousLights(unsigned int lightCount);
         static void Draw(GameObject* gameObject);
-        static void DrawQueue();
-        static void Clear();
-        static void SwapBuffers();
         static void SetSwapInterval(short interval);
         static bool wireframe;
     };

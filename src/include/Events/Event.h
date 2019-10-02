@@ -10,6 +10,7 @@
 namespace TE {
     class Event {
     public:
+        Event() = default;
         virtual ~Event() = default;
 
         bool handled = false;
@@ -17,6 +18,16 @@ namespace TE {
         virtual int GetCategories() = 0;
 
         inline bool IsOfCategory(EventCategory category) { return (GetCategories() & category) != 0; }
+    };
+
+    class InputEvent : public Event {
+    public:
+        virtual ~InputEvent() = default;
+    };
+
+    class ApplicationEvent : public Event {
+    public:
+        virtual ~ApplicationEvent() = default;
     };
 }
 

@@ -9,7 +9,7 @@
 #include "Event.h"
 
 namespace TE {
-    class WindowEvent : public Event {
+    class WindowEvent : public ApplicationEvent {
     public:
         int GetCategories() override;
     };

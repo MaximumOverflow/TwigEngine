@@ -17,11 +17,11 @@
 
 using namespace TE;
 
-bool Overlay::ImGuiInitialized = 0;
+bool Overlay::ImGuiInitialized = false;
 unsigned int Overlay::overlayCount = 0;
 ImGuiIO* Overlay::io;
 
-TE::Overlay::Overlay() {
+TE::Overlay::Overlay() : Layer("ImGui Overlay") {
     if (!ImGuiInitialized)
         InitializeImGui();
 

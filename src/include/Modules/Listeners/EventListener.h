@@ -15,14 +15,14 @@ namespace TE {
         unsigned long ID;
         std::vector<std::function<void(Event*)>> functionCallbacks;
     public:
-        EventListener(GameObject* parent);
-        ~EventListener();
+        explicit EventListener(GameObject* parent = nullptr);
+        virtual ~EventListener();
 
-        void HandleEvent(Event* event);
+        virtual void HandleEvent(Event* event);
         void SetID(unsigned long ID);
         void AddCallback(std::function<void(Event*)> callback);
 
-        bool AllowMultipleInstances() override { return false; };
+        bool AllowMultipleInstances() override { return true; };
     };
 }
 

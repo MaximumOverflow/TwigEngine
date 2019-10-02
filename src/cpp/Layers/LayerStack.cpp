@@ -2,9 +2,12 @@
 // Created by max on 21/07/19.
 //
 
+#include <Layers/LayerStack.h>
+
 #include "Debug.h"
 #include "Layers/Layer.h"
 #include "Layers/LayerStack.h"
+#include "Layers/RenderingLayer.h"
 
 using namespace TE;
 
@@ -33,12 +36,6 @@ void LayerStack::Propagate_Reverse(Event *event) {
             layer->Notify(event);
         }
     }
-}
-
-Layer* LayerStack::AddLayer(Layer *layer) {
-    layers.insert(Begin() + insertLocation++, layer);
-    layer->OnAttach();
-    return layer;
 }
 
 void LayerStack::RemoveLayer(Layer *layer) {
@@ -83,11 +80,19 @@ void LayerStack::Clear() {
 void LayerStack::UpdateAll() {
     Overlay::NewFrame();
     for (auto* layer : layers) {
-        layer->Update();
+        layer->UpdateGeneric();
     }
     Overlay::EndFrame();
 }
 
 const std::vector<Layer*> &LayerStack::GetLayerList() {
     return layers;
+}
+
+Layer* LayerStack::GetLayer(std::string name) {
+    for (auto& layer : layers)
+        if (layer->name == name)
+            return layer;
+
+    return nullptr;
 }
